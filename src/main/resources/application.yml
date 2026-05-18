@@ -1,13 +1,15 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 spring:
+  config:
+    import: optional:file:.env[.properties]
   application:
     name: vespa-robot-fleet
   datasource:
-    url: jdbc:mysql://database-1.ch64i0iw2y11.ap-south-1.rds.amazonaws.com:3306/vespadb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: admin
-    password: NAhomb40IJlcKbbiKYVB
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10

@@ -1,0 +1,13 @@
+target/
+.mvn/
+mvnw
+mvnw.cmd
+*.log
+.git/
+.gitattributes
+.gitignore
+README.md
+FRONTEND_PROMPT.md
+schema.sql
+stderr.log
+stdout.log
