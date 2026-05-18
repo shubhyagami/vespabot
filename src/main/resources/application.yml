@@ -1,0 +1,69 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: vespa-robot-fleet
+  datasource:
+    url: jdbc:mysql://database-1.ch64i0iw2y11.ap-south-1.rds.amazonaws.com:3306/vespadb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: admin
+    password: NAhomb40IJlcKbbiKYVB
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    open-in-view: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+  websocket:
+    max-text-message-size: 8192
+    max-binary-message-size: 8192
+
+logging:
+  level:
+    com.example.vespa: DEBUG
+    org.springframework.web.socket: INFO
+    org.springframework.security: INFO
+
+robot:
+  simulation:
+    enabled: true
+    interval-ms: 3000
+    trivandrum-center-lat: 8.5241
+    trivandrum-center-lng: 76.9366
+    bots:
+      - id: BOT-01
+        name: Atlas
+        startLat: 8.5300
+        startLng: 76.9400
+      - id: BOT-02
+        name: Gemini
+        startLat: 8.5180
+        startLng: 76.9420
+      - id: BOT-03
+        name: Nova
+        startLat: 8.5280
+        startLng: 76.9280
+      - id: BOT-04
+        name: Orion
+        startLat: 8.5200
+        startLng: 76.9300
+      - id: BOT-05
+        name: Phoenix
+        startLat: 8.5260
+        startLng: 76.9340
+      - id: BOT-06
+        name: Sentinel
+        startLat: 8.5241
+        startLng: 76.9366
+  real-robot-id: BOT-06
