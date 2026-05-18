@@ -30,6 +30,11 @@ spring:
   websocket:
     max-text-message-size: 8192
     max-binary-message-size: 8192
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
 
 logging:
   level:
@@ -46,26 +51,14 @@ robot:
     bots:
       - id: BOT-01
         name: Atlas
-        startLat: 8.5300
-        startLng: 76.9400
       - id: BOT-02
         name: Gemini
-        startLat: 8.5180
-        startLng: 76.9420
       - id: BOT-03
         name: Nova
-        startLat: 8.5280
-        startLng: 76.9280
       - id: BOT-04
         name: Orion
-        startLat: 8.5200
-        startLng: 76.9300
       - id: BOT-05
         name: Phoenix
-        startLat: 8.5260
-        startLng: 76.9340
       - id: BOT-06
         name: Sentinel
-        startLat: 8.5241
-        startLng: 76.9366
   real-robot-id: BOT-06

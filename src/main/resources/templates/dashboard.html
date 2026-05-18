@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VESPA Fleet OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<div id="app">
+  <header class="header">
+    <div class="header-overlay"></div>
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="brand">
+          <div class="brand-icon">V</div>
+          <div>
+            <h1>VESPA Fleet OS</h1>
+            <p class="brand-sub">Smart Multi-Robot Delivery Monitoring</p>
+          </div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="status-indicator">
+          <span class="status-dot" id="wsDot"></span>
+          <span class="status-text" id="wsStatus">connecting</span>
+        </div>
+        <div class="clock" id="clock"></div>
+        <div class="bell-wrap">
+          <svg class="bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="bell-badge" id="bellBadge" th:text="${unreadNotifs}">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+        <a href="#" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg><span>Fleet Status</span></a>
+        <a href="#" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span>Alerts</span></a>
+        <a href="#" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span>AI Insights</span></a>
+        <a href="#" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1.08 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1.08 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1.08z"/></svg><span>Settings</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <span class="sys-dot"></span>
+        <span class="sys-text">System Online</span>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <!-- Stats Bar -->
+      <div class="stats-grid">
+        <div class="stat-card"><span class="stat-icon">🤖</span><div><span class="stat-value" id="statTotal" th:text="${totalRobots}">0</span><span class="stat-label">Total Robots</span></div></div>
+        <div class="stat-card"><span class="stat-icon">⚡</span><div><span class="stat-value" id="statActive" th:text="${activeRobots}">0</span><span class="stat-label">Active</span></div></div>
+        <div class="stat-card"><span class="stat-icon">🔋</span><div><span class="stat-value" id="statBattery" th:text="${avgBattery}">0</span><span class="stat-label">Avg Battery</span></div></div>
+        <div class="stat-card"><span class="stat-icon">✅</span><div><span class="stat-value" id="statTasks" th:text="${totalTasks}">0</span><span class="stat-label">Tasks Done</span></div></div>
+        <div class="stat-card"><span class="stat-icon">🔔</span><div><span class="stat-value" id="statAlerts" th:text="${unreadNotifs}">0</span><span class="stat-label">Active Alerts</span></div></div>
+        <div class="stat-card"><span class="stat-icon">⏱</span><div><span class="stat-value" id="statUptime">0</span><span class="stat-label">Avg Uptime</span></div></div>
+      </div>
+
+      <!-- Robot Fleet Cards -->
+      <div class="fleet-section">
+        <h2 class="section-title"><span class="title-dot"></span>Fleet Status</h2>
+        <div class="fleet-grid" id="fleetGrid">
+          <div th:each="r : ${robots}" class="robot-card" th:attr="data-id=${r.id}">
+            <div class="rc-header">
+              <div>
+                <div class="rc-id" th:text="${r.id}">BOT-01</div>
+                <div class="rc-name" th:text="${r.name}">Atlas</div>
+              </div>
+              <span class="robot-badge" th:classappend="${r.isReal} ? 'badge-red' : 'badge-blue'" th:text="${r.isReal} ? 'REAL' : 'SIM'">SIM</span>
+            </div>
+            <div class="rc-body">
+              <div class="rc-row"><span class="rc-label">Status</span><span class="rc-status" th:text="${r.status}" th:classappend="'status-' + ${r.status?.toLowerCase()}">IDLE</span></div>
+              <div class="rc-row"><span class="rc-label">Battery</span><span class="rc-value" th:text="${r.battery} + '%'">85%</span></div>
+              <div class="rc-row"><span class="rc-label">Speed</span><span class="rc-value" th:text="${r.speed} != null ? ${#numbers.formatDecimal(r.speed, 0, 1)} + ' m/s' : '0 m/s'">1.2 m/s</span></div>
+              <div class="rc-row"><span class="rc-label">Distance</span><span class="rc-value" th:text="${r.ultrasonicDistance} != null ? ${#numbers.formatDecimal(r.ultrasonicDistance, 0, 1)} + ' cm' : '--'">45 cm</span></div>
+              <div class="rc-row" th:if="${r.rfidTag}"><span class="rc-label">RFID</span><span class="rc-value rc-mono" th:text="${r.rfidTag}">PKG-301</span></div>
+              <div class="rc-row" th:if="${r.currentDestination}"><span class="rc-label">Destination</span><span class="rc-value" th:text="${r.currentDestination}">Warehouse</span></div>
+              <div class="rc-row"><span class="rc-label">Tasks</span><span class="rc-value" th:text="${r.tasksCompleted} ?: '0'">42</span></div>
+              <div class="rc-row"><span class="rc-label">Online</span><span class="rc-value" th:classappend="${r.online} != false ? 'text-green' : 'text-red'" th:text="${r.online} != false ? 'YES' : 'NO'">YES</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sensor Strip -->
+      <div class="sensor-strip">
+        <div class="sensor-header">
+          <span class="badge badge-red">LIVE</span>
+          <span class="sensor-title">ESP8266 Live Sensor — BOT-01</span>
+        </div>
+        <div class="sensor-grid">
+          <div class="sensor-card"><div class="sen-icon">🌡</div><div class="sen-label">Temperature</div><div class="sen-value" id="senTemp">--</div><div class="sen-unit">°C</div></div>
+          <div class="sensor-card"><div class="sen-icon">💧</div><div class="sen-label">Humidity</div><div class="sen-value" id="senHumidity">--</div><div class="sen-unit">%</div></div>
+          <div class="sensor-card"><div class="sen-icon">📡</div><div class="sen-label">Ultrasonic</div><div class="sen-value" id="senDistance">--</div><div class="sen-unit">cm</div></div>
+          <div class="sensor-card"><div class="sen-icon">💨</div><div class="sen-label">Gas</div><div class="sen-value" id="senGas">--</div><div class="sen-unit">ppm</div></div>
+          <div class="sensor-card"><div class="sen-icon">📳</div><div class="sen-label">Vibration</div><div class="sen-value" id="senVibration">--</div><div class="sen-unit">mm/s</div></div>
+          <div class="sensor-card"><div class="sen-icon">☀</div><div class="sen-label">Light</div><div class="sen-value" id="senLight">--</div><div class="sen-unit">lux</div></div>
+        </div>
+      </div>
+
+      <!-- Live Map -->
+      <div class="map-section">
+        <h2 class="section-title"><span class="title-dot"></span>Warehouse Map</h2>
+        <div class="map-wrap" id="fleetMap" style="height:400px"></div>
+      </div>
+
+      <!-- Bottom -->
+      <div class="bottom-grid">
+        <div class="panel">
+          <h2 class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="panel-icon"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>AI Insights</h2>
+          <div class="insights-grid">
+            <div class="insight-card card-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="insight-icon"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><div class="insight-label">Battery Risk</div><div class="insight-value" id="insightBattery">Calculating...</div></div>
+            <div class="insight-card card-cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="insight-icon"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="insight-label">Efficiency</div><div class="insight-value" id="insightEfficiency">--</div></div>
+            <div class="insight-card card-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="insight-icon"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div class="insight-label">Maintenance</div><div class="insight-value" id="insightMaintenance">--</div></div>
+            <div class="insight-card card-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="insight-icon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div class="insight-label">Anomaly</div><div class="insight-value" id="insightAnomaly">No anomalies</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h2 class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="panel-icon"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Activity Timeline</h2>
+          <div class="timeline" id="timeline"><div class="tl-empty">No activity yet</div></div>
+        </div>
+        <div class="panel panel-wide">
+          <h2 class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="panel-icon"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Notifications</h2>
+          <div class="notif-list" id="notifList">
+            <div th:each="n : ${notifications}" class="notif-item" th:classappend="${n.isRead} ? 'read' : 'unread'" th:attr="data-id=${n.id}">
+              <div class="notif-top"><span class="notif-type" th:text="${n.type}">INFO</span><span th:if="${!n.isRead}" class="notif-new">NEW</span></div>
+              <div class="notif-msg" th:text="${n.message}">message</div>
+              <div class="notif-time" th:text="${#temporals.format(n.createdAt, 'dd MMM HH:mm')}">time</div>
+            </div>
+            <div th:if="${#lists.isEmpty(notifications)}" class="tl-empty">No notifications</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script src="/js/dashboard.js"></script>
+</body>
+</html>

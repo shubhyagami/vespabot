@@ -11,3 +11,5 @@ FRONTEND_PROMPT.md
 schema.sql
 stderr.log
 stdout.log
+.env
+.env.example
