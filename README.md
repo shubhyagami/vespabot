@@ -2,10 +2,10 @@
 
 [![Java](https://img.shields.io/badge/Java-17-blue?logo=java)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)
-[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 [![Build](https://img.shields.io/badge/Build-Maven-success?logo=apachemaven)](https://maven.apache.org/)
 [![WebSocket](https://img.shields.io/badge/WebSocket-STOMP%2FSockJS-ff69b4)](https://stomp-js.github.io/)
-[![Maintenance](https://img.shields.io/badge/Maintained-actively-success)](https://github.com/shubhyagami/vespabot)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+[![Maintained](https://img.shields.io/badge/Maintained-actively-success)](https://github.com/shubhyagami/vespabot)
 [![Stars](https://img.shields.io/github/stars/shubhyagami/vespabot?style=social)](https://github.com/shubhyagami/vespabot/stargazers)
 [![Discord](https://img.shields.io/badge/Discord-VespaBot-7289da?logo=discord)](https://discord.com)
 
@@ -19,7 +19,7 @@
    Smart Multi-Robot Delivery Monitoring · Java + Spring Boot
 ```
 
-A production-quality Spring Boot + Thymeleaf dashboard for monitoring 6 delivery robots in a smart warehouse environment. Features 5 simulated robots and 1 real hardware-integrated robot with WebSocket real-time updates.
+A production-quality Spring Boot + Thymeleaf dashboard for monitoring a fleet of delivery robots in a smart warehouse environment. Features 5 simulated robots and 1 real hardware-integrated robot with WebSocket real-time updates.
 
 ## 🚀 Quick Stats
 
@@ -42,34 +42,34 @@ A production-quality Spring Boot + Thymeleaf dashboard for monitoring 6 delivery
 ## Features
 
 ### Dashboard
-- Live map with animated robot markers and movement paths
-- Robot status cards with sensor data
-- Real-time analytics charts (battery, speed, tasks, status)
-- AI insights panel
-- Activity timeline
-- Live notifications with alerts
+- Live map with animated robot markers and movement paths.
+- Robot status cards with sensor data.
+- Real-time analytics charts (battery, speed, tasks, status).
+- AI insights panel.
+- Activity timeline.
+- Live notifications with alerts.
 
 ### Robot Monitoring
-- 6 robots with individual detail pages
-- Battery level, ultrasonic distance, RFID tags, speed, destination
-- Online/offline status, last updated timestamp
-- Color-coded markers (Green=Active, Yellow=Charging, Red=Error, Blue=Idle)
+- 6 robots with individual detail pages.
+- Battery level, ultrasonic distance, RFID tags, speed, destination.
+- Online/offline status, last updated timestamp.
+- Color-coded markers (Green=Active, Yellow=Charging, Red=Error, Blue=Idle).
 
 ### Real-Time Updates
-- WebSocket + STOMP for live data streaming
-- Robot movement updates every 3 seconds
-- Battery low alerts
-- Obstacle detection warnings
-- RFID scan notifications
+- WebSocket + STOMP for live data streaming.
+- Robot movement updates every 3 seconds.
+- Battery low alerts.
+- Obstacle detection warnings.
+- RFID scan notifications.
 
 ### API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | /api/robots | Get all robots |
-| GET | /api/robots/{id} | Get robot by ID |
-| POST | /api/robots/live-update | Receive real robot sensor data |
-| GET | / | Dashboard home |
+| GET | `/api/robots` | Get all robots |
+| GET | `/api/robots/{id}` | Get robot by ID |
+| POST | `/api/robots/live-update` | Receive real robot sensor data |
+| GET | `/` | Dashboard home |
 
 ---
 
@@ -86,12 +86,12 @@ cd vespabot
 ### 2. Configure the Database
 Update your `src/main/resources/application.properties` to point to your MySQL instance, or rely on the automatic H2 fallback for a quick local test run:
 ```properties
-# Primary MySQL Configuration (Optional)
+# Primary MySQL Configuration
 spring.datasource.url=jdbc:mysql://localhost:3306/vespa_db
 spring.datasource.username=root
 spring.datasource.password=your_password
 
-# H2 Fallback (Enabled by default if MySQL is unreachable)
+# H2 Fallback (Enabled automatically if MySQL is unreachable)
 spring.h2.console.enabled=true
 ```
 
@@ -108,12 +108,10 @@ Once started, open your favorite browser and navigate to `http://localhost:8080`
 
 ## 💡 Pro Tips
 
-Maximize your VESPA experience with these operational best tips:
-
-- **Simulated Bot Swarming:** To increase visual map density, you can decrease the sleep interval in your simulation config to watch the decision engine handle path overlapping.
-- **WebSocket Connection Drop:** Adjust the heartbeat interval configuration in your `WebSocketConfig.java` if you experience moments of "stale" data during high frequency interval packet bursts. The default 3-second heartbeat should match your backend publish rate.
-- **Monitor Hardware Bots:** The `/api/robots/live-update` endpoint accepts millisecond-precision timestamps. If you are connecting physical hardware, modularize the interval schedule on the firmware to avoid flooding the client browser with DOM updates.
-- **Visualizing Matrix Flows:** Change your browser's dev tools network tab to WS (WebSocket) to watch live JSON frames and see exactly when the dashboard requests the robots move.
+- **Simulated Bot Swarming:** Decrease the sleep interval in your simulation config to increase visual map density and watch the decision engine handle overlapping paths.
+- **WebSocket Connection Drop:** If you experience moments of "stale" data during high-frequency packet bursts, adjust the heartbeat interval in your `WebSocketConfig.java`. The default 3-second heartbeat should match your backend publish rate.
+- **Monitor Hardware Bots:** The `/api/robots/live-update` endpoint accepts millisecond-precision timestamps. When connecting physical hardware, modularize the firmware's interval schedule to avoid flooding the client browser with DOM updates.
+- **Visualizing Matrix Flows:** Use your browser's dev tools network tab to filter by WS (WebSocket) and watch live JSON frames to see exactly when the dashboard requests robot movements.
 
 ---
 
@@ -121,26 +119,26 @@ Maximize your VESPA experience with these operational best tips:
 
 ### 2026-08-03
 - Implemented asynchronous queue processing for incoming WebSocket telemetry data.
-- Optimized map mocking on concurrently simulated robots across 4 flights.
+- Optimized map mocking for concurrently simulated robots across 4 flights.
 - Fixed a bug where offline simulated robots remained scheduled for active misses.
 - Enhanced dashboard UI for deeper mobile resolution support using responsive Canvas wrappers.
 
 ### 2026-07-15
-- Announced initial A/V prototype for "adaptive speed shuffle mode".
+- Introduced an initial A/V prototype for "adaptive speed shuffle mode".
 - Corrected H2 database fallback mode to safely load test fixtures on legacy hardware pagination.
-- Optimized MySQL connection pooling to restrict stale threads on dashboard concurrency.
+- Optimized MySQL connection pooling to restrict stale threads during dashboard concurrency.
 
 ### 2026-07-01
-- Initial dashboard track events launched.
+- Launched initial dashboard track events.
 - Enforced strict RFID scanning limits to resolve map stutters.
-- Added helm chart package option to quickly integrate the dashboard against existing K8s clusters.
+- Added a Helm chart package option to quickly integrate the dashboard against existing K8s clusters.
 
 ---
 
 ## 🗓️ Weekly Highlight
 
 **Focus: The AI Edge**
-This week, we are featuring VESPA's depth-sounder integration on the R-01 prototype hardware unit. By cross-referencing the overhead ultrasonic sensors with the static warehouse map, the VESPA algorithm can boost obstacle detection accuracy to resolve crowded terminal stands. Once the hardware noticed a map block, the nearest idle simulated bots quickly rise! routed around the detected block before the server even broadcasted a new general update message.
+This week, we are featuring VESPA's depth-sounder integration on the R-01 prototype hardware unit. By cross-referencing overhead ultrasonic sensors with the static warehouse map, the VESPA algorithm enhances obstacle detection accuracy to navigate crowded terminal stands. When the hardware detects a block, the nearest idle simulated bots are quickly routed around the obstruction before the server broadcasts a general update message.
 
 ---
 
@@ -151,9 +149,9 @@ This week, we are featuring VESPA's depth-sounder integration on the R-01 protot
 
 ---
 
-## 📂 Repository Stats & Metrics
+## 📂 Repository Health
 
-Let's break down the project's tech complexity with a little sharpened perspective! 
+Maintaining a reliable multi-robot monitoring system requires strict quality standards. Here is a quick look at our project health metrics:
 
 | Repository Health | Scorecard |
 |-------------------|-----------|
@@ -164,20 +162,20 @@ Let's break down the project's tech complexity with a little sharpened perspecti
 | Simulation Engine Latency | < 40ms |
 | Hardware Response Delay | < 120ms |
 
-We believe that building naval multi-robot monitoring should not blueprint at a company's pace to catch up. VESPA's docker compose network stacks are modular, fully documented, and annotated for eager editors.
+VESPA's Docker Compose network stacks are modular, fully documented, and annotated to make deployment straightforward.
 
 ---
 
 ## 🤝 Contributing
 
-We enthusiastically welcome new framework integrations! If you have an experience suggestion for extending the dashboard:
+We welcome framework integrations and feature extensions! If you have a suggestion for extending the dashboard:
 
-1. Fork the repo
-2. Configure your environmental spawning backend 
-3. Submit a modular pull request
+1. Fork the repository.
+2. Create a feature branch for your environmental spawning backend.
+3. Submit a modular pull request.
 
-> Required: For all telemetry changes, tag with the label `telemetry-edit`, so we watch the topological dashboard mock closely.
+> **Note:** For all telemetry changes, please tag your PR with the label `telemetry-edit` so we can closely monitor topological dashboard mocks.
 
 ## 📜 License
 
-This repository is distributed under the MIT License. See `LICENSE` file for more information.
+This repository is distributed under the MIT License. See the `LICENSE` file for more information.
