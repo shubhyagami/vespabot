@@ -5,10 +5,9 @@
 [![Build](https://img.shields.io/badge/Build-Maven-success?logo=apachemaven)](https://maven.apache.org/)
 [![WebSocket](https://img.shields.io/badge/WebSocket-STOMP%2FSockJS-ff69b4)](https://stomp-js.github.io/)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
-[![Maintained](https://img.shields.io/badge/Maintained-actively-success)](https://github.com/shubhyagami/vespabot)
-[![Stars](https://img.shields.io/github/stars/shubhyagami/vespabot?style=social)](https://github.com/shubhyagami/vespabot/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/shubhyagami/vespabot?style=social)](https://github.com/shubhyagami/vespabot)
 
-A production-grade Spring Boot + Thymeleaf dashboard for monitoring a fleet of delivery robots in a smart warehouse environment. Features 5 simulated robots and 1 real hardware-integrated robot with WebSocket real-time updates.
+A Spring Boot + Thymeleaf dashboard for monitoring a fleet of delivery robots in a smart warehouse environment. It tracks 5 simulated robots and 1 real hardware-integrated robot, providing WebSocket-driven real-time telemetry updates.
 
 ## 🛠️ Tech Stack
 
@@ -19,41 +18,23 @@ A production-grade Spring Boot + Thymeleaf dashboard for monitoring a fleet of d
 
 ## ✨ Features
 
-### Dashboard
-- Live map with animated robot markers and movement paths.
-- Robot status cards with sensor data.
-- Real-time analytics charts (battery, speed, tasks, status).
-- AI insights panel.
-- Activity timeline.
-- Live notifications with alerts.
-
-### Robot Monitoring
-- 6 robots with individual detail pages.
-- Battery level, ultrasonic distance, RFID tags, speed, destination.
-- Online/offline status, last updated timestamp.
-- Color-coded markers (Green=Active, Yellow=Charging, Red=Error, Blue=Idle).
-
-### Real-Time Updates
-- WebSocket + STOMP for live data streaming.
-- Robot movement updates every 3 seconds.
-- Battery low alerts.
-- Obstacle detection warnings.
-- RFID scan notifications.
+- **Live Dashboard**: Animated map with robot markers, movement paths, sensor data cards, and real-time analytics charts (battery, speed, tasks, status).
+- **Robot Monitoring**: Individual detail pages for 6 robots displaying battery level, ultrasonic distance, RFID tags, speed, and destination.
+- **Status Indicators**: Color-coded map markers (Green=Active, Yellow=Charging, Red=Error, Blue=Idle), online/offline status, and last updated timestamps.
+- **Real-Time Updates**: Live data streaming via WebSocket + STOMP. Robot movement updates every 3 seconds, alongside battery low alerts, obstacle detection warnings, and RFID scan notifications.
 
 ### API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/robots` | Get all robots |
-| GET | `/api/robots/{id}` | Get robot by ID |
-| POST | `/api/robots/live-update` | Receive real robot sensor data |
-| GET | `/` | Dashboard home |
+| `GET` | `/api/robots` | Get all robots |
+| `GET` | `/api/robots/{id}` | Get robot by ID |
+| `POST` | `/api/robots/live-update` | Receive real robot sensor data |
+| `GET` | `/` | Dashboard home |
 
----
+## 🚀 Getting Started
 
-## 🚀 Quick Start Guide
-
-Get the VESPA monitoring dashboard up and running on your local machine in just a few steps! This setup assumes you have JDK 17+ and Maven installed.
+This setup assumes you have JDK 17+ and Maven installed.
 
 ### 1. Clone the Repository
 ```bash
@@ -82,24 +63,19 @@ Use the Maven wrapper to bootstrap the Spring Boot server:
 ### 4. Access the Dashboard
 Once started, open your browser and navigate to `http://localhost:8080` to view the live bot telemetry.
 
----
+## 💡 Operational Notes
 
-## 💡 Pro Tips
-
-- **Simulated Bot Swarming:** Decrease the sleep interval in your simulation config to increase visual map density and watch the decision engine handle overlapping paths.
-- **WebSocket Connection Drop:** If you experience moments of "stale" data during high-frequency packet bursts, adjust the heartbeat interval in your `WebSocketConfig.java`. The default 3-second heartbeat should match your backend publish rate.
-- **Monitor Hardware Bots:** The `/api/robots/live-update` endpoint accepts millisecond-precision timestamps. When connecting physical hardware, modularize the firmware's interval schedule to avoid flooding the client browser with DOM updates.
-- **Visualizing Matrix Flows:** Use your browser's dev tools network tab to filter by WS (WebSocket) and watch live JSON frames to see exactly when the dashboard requests robot movements.
-
----
+- **WebSocket Tuning**: If you experience stale data during high-frequency packet bursts, adjust the heartbeat interval in `WebSocketConfig.java`. The default 3-second heartbeat should match your backend publish rate.
+- **Hardware Integration**: The `/api/robots/live-update` endpoint accepts millisecond-precision timestamps. When connecting physical hardware, modularize the firmware's interval schedule to avoid flooding the client browser with DOM updates.
+- **Debugging Matrix Flows**: Use your browser's dev tools network tab to filter by WS (WebSocket) and watch live JSON frames to monitor exactly when the dashboard requests robot movements.
 
 ## 📅 Changelog
 
 ### 2026-08-03
 - Implemented asynchronous queue processing for incoming WebSocket telemetry data.
 - Optimized map mocking for concurrently simulated robots across 4 flights.
-- Fixed a bug where offline simulated robots remained scheduled for active misses.
-- Enhanced dashboard UI for deeper mobile resolution support using responsive Canvas wrappers.
+- Fixed a bug where offline simulated robots remained scheduled for active tasks.
+- Enhanced dashboard UI for mobile resolution support using responsive Canvas wrappers.
 
 ### 2026-07-15
 - Introduced an initial A/V prototype for "adaptive speed shuffle mode".
@@ -111,32 +87,13 @@ Once started, open your browser and navigate to `http://localhost:8080` to view 
 - Enforced strict RFID scanning limits to resolve map stutters.
 - Added a Helm chart package option to quickly integrate the dashboard against existing K8s clusters.
 
----
-
-## 📂 Repository Health
-
-Maintaining a reliable multi-robot monitoring system requires strict quality standards. Here is a quick look at our project health metrics:
-
-| Repository Health | Scorecard |
-|-------------------|-----------|
-| Code Coverage Goal | ≥ 80% |
-| Issue Resolution Time Avg | 48 hours |
-| Pull Request Merge Rate | 92% |
-| Dependency Updates | Monthly |
-| Simulation Engine Latency | < 40ms |
-| Hardware Response Delay | < 120ms |
-
-VESPA's Docker Compose network stacks are modular, fully documented, and annotated to make deployment straightforward.
-
----
-
 ## 🤝 Contributing
 
 We welcome framework integrations and feature extensions! If you have a suggestion for extending the dashboard:
 
 1. Fork the repository.
 2. Create a feature branch for your environmental spawning backend.
-3. Submit a modular pull request.
+3. Submit a pull request.
 
 > **Note:** For all telemetry changes, please tag your PR with the label `telemetry-edit` so we can closely monitor topological dashboard mocks.
 
