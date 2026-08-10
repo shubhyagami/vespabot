@@ -7,39 +7,17 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 [![Maintained](https://img.shields.io/badge/Maintained-actively-success)](https://github.com/shubhyagami/vespabot)
 [![Stars](https://img.shields.io/github/stars/shubhyagami/vespabot?style=social)](https://github.com/shubhyagami/vespabot/stargazers)
-[![Discord](https://img.shields.io/badge/Discord-VespaBot-7289da?logo=discord)](https://discord.com)
 
-```
-    __     __     ___      ____    ___    ____    ____  
-    \ \   / /    /   \    |  _ \  |_ _|  / ___|  |  _ \ 
-     \ \ / /    / /\ \   | |_) |  | |  | |  _   | |_) |
-      \ V /    / ____ \  |  __/   | |  | |_| |  |  _ < 
-       \_/    /_/    \_\ |_|     |___|  \____|  |_| \_\
-                                                         
-   Smart Multi-Robot Delivery Monitoring · Java + Spring Boot
-```
+A production-grade Spring Boot + Thymeleaf dashboard for monitoring a fleet of delivery robots in a smart warehouse environment. Features 5 simulated robots and 1 real hardware-integrated robot with WebSocket real-time updates.
 
-A production-quality Spring Boot + Thymeleaf dashboard for monitoring a fleet of delivery robots in a smart warehouse environment. Features 5 simulated robots and 1 real hardware-integrated robot with WebSocket real-time updates.
-
-## 🚀 Quick Stats
-
-| Metric | Value |
-|--------|-------|
-| Active Robots | 6 (5 simulated, 1 real) |
-| Total Simulated Deliveries | 12,847 |
-| Battery Cycles (Fleet) | 5,432 |
-| Obstacles Avoided | 1,289 |
-| Avg Response Time | 2.4s |
-| Uptime | 99.97% |
-
-## Tech Stack
+## 🛠️ Tech Stack
 
 - **Backend**: Java 17, Spring Boot 3.2.4, Spring Data JPA, Spring Security, Spring WebSocket
 - **Frontend**: Thymeleaf, Bootstrap 5, Leaflet.js, Chart.js, STOMP + SockJS
 - **Database**: MySQL (primary), H2 (fallback)
 - **Build**: Maven
 
-## Features
+## ✨ Features
 
 ### Dashboard
 - Live map with animated robot markers and movement paths.
@@ -73,7 +51,7 @@ A production-quality Spring Boot + Thymeleaf dashboard for monitoring a fleet of
 
 ---
 
-## 🛠️ Quick Start Guide
+## 🚀 Quick Start Guide
 
 Get the VESPA monitoring dashboard up and running on your local machine in just a few steps! This setup assumes you have JDK 17+ and Maven installed.
 
@@ -102,7 +80,7 @@ Use the Maven wrapper to bootstrap the Spring Boot server:
 ```
 
 ### 4. Access the Dashboard
-Once started, open your favorite browser and navigate to `http://localhost:8080` to view the live bot telemetry.
+Once started, open your browser and navigate to `http://localhost:8080` to view the live bot telemetry.
 
 ---
 
@@ -132,20 +110,6 @@ Once started, open your favorite browser and navigate to `http://localhost:8080`
 - Launched initial dashboard track events.
 - Enforced strict RFID scanning limits to resolve map stutters.
 - Added a Helm chart package option to quickly integrate the dashboard against existing K8s clusters.
-
----
-
-## 🗓️ Weekly Highlight
-
-**Focus: The AI Edge**
-This week, we are featuring VESPA's depth-sounder integration on the R-01 prototype hardware unit. By cross-referencing overhead ultrasonic sensors with the static warehouse map, the VESPA algorithm enhances obstacle detection accuracy to navigate crowded terminal stands. When the hardware detects a block, the nearest idle simulated bots are quickly routed around the obstruction before the server broadcasts a general update message.
-
----
-
-## 💬 Inspiration
-
-> "Efficiency is doing things right; effectiveness is doing the right things. Smart robotics isn't just about autonomous movement—it's about orchestrating a fleet to seamlessly do the right things, right now."
-> - *Inspired by Peter Drucker and the VESPA project mission*
 
 ---
 
