@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/shubhyagami/vespabot?style=social)](https://github.com/shubhyagami/vespabot)
 
-A Spring Boot and Thymeleaf dashboard for monitoring a fleet of delivery robots in a smart warehouse environment. It tracks 5 simulated robots and 1 real hardware-integrated robot, providing WebSocket-driven real-time telemetry updates.
+A Spring Boot dashboard for monitoring a fleet of delivery robots in a smart warehouse environment. It tracks 5 simulated robots and 1 real hardware-integrated robot, providing WebSocket-driven real-time telemetry updates.
 
 ## 🛠️ Tech Stack
 
