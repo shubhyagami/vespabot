@@ -9,21 +9,21 @@
 
 A Spring Boot dashboard for monitoring a fleet of delivery robots in a smart warehouse environment. It tracks 5 simulated robots and 1 real hardware-integrated robot, providing WebSocket-driven real-time telemetry updates.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Backend**: Java 17, Spring Boot 3.2.4, Spring Data JPA, Spring Security, Spring WebSocket
 - **Frontend**: Thymeleaf, Bootstrap 5, Leaflet.js, Chart.js, STOMP + SockJS
 - **Database**: MySQL (primary), H2 (fallback)
 - **Build**: Maven
 
-## ✨ Features
+## Features
 
 - **Live Dashboard**: Animated map with robot markers, movement paths, sensor data cards, and real-time analytics charts (battery, speed, tasks, status).
 - **Robot Monitoring**: Individual detail pages for 6 robots displaying battery level, ultrasonic distance, RFID tags, speed, and destination.
 - **Status Indicators**: Color-coded map markers (Green=Active, Yellow=Charging, Red=Error, Blue=Idle), online/offline status, and last updated timestamps.
 - **Real-Time Updates**: Live data streaming via WebSocket + STOMP. Robot movement updates every 3 seconds, alongside low battery alerts, obstacle detection warnings, and RFID scan notifications.
 
-### API Endpoints
+## API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -32,7 +32,7 @@ A Spring Boot dashboard for monitoring a fleet of delivery robots in a smart war
 | `POST` | `/api/robots/live-update` | Receive real robot sensor data |
 | `GET` | `/` | Dashboard home |
 
-## 🚀 Getting Started
+## Getting Started
 
 To run this project locally, you will need JDK 17+ and Maven installed.
 
@@ -63,13 +63,13 @@ Use the Maven wrapper to bootstrap the Spring Boot server:
 ### 4. Access the Dashboard
 Once started, open your browser and navigate to `http://localhost:8080` to view the live bot telemetry.
 
-## 💡 Operational Notes
+## Operational Notes
 
 - **WebSocket Tuning**: If you experience stale data during high-frequency packet bursts, adjust the heartbeat interval in `WebSocketConfig.java`. The default 3-second heartbeat should match your backend publish rate.
 - **Hardware Integration**: The `/api/robots/live-update` endpoint accepts millisecond-precision timestamps. When connecting physical hardware, modularize the firmware's interval schedule to avoid flooding the client browser with DOM updates.
 - **Debugging Data Flows**: Use your browser's dev tools network tab to filter by WS (WebSocket) and watch live JSON frames to monitor exactly when the dashboard requests robot movements.
 
-## 📅 Changelog
+## Changelog
 
 ### 2026-08-03
 - Implemented asynchronous queue processing for incoming WebSocket telemetry data.
@@ -87,7 +87,7 @@ Once started, open your browser and navigate to `http://localhost:8080` to view 
 - Enforced strict RFID scanning limits to resolve map stutters.
 - Added a Helm chart package option to quickly integrate the dashboard against existing K8s clusters.
 
-## 🤝 Contributing
+## Contributing
 
 We welcome framework integrations and feature extensions! If you have a suggestion for extending the dashboard:
 
@@ -97,6 +97,6 @@ We welcome framework integrations and feature extensions! If you have a suggesti
 
 > **Note:** For all telemetry changes, please tag your PR with the label `telemetry-edit` so we can closely monitor dashboard topology updates.
 
-## 📜 License
+## License
 
 This repository is distributed under the MIT License. See the `LICENSE` file for more information.
