@@ -7,21 +7,49 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/shubhyagami/vespabot?style=social)](https://github.com/shubhyagami/vespabot)
 
-A Spring Boot dashboard for monitoring a fleet of delivery robots in a smart warehouse environment. It tracks 5 simulated robots and 1 real hardware-integrated robot, providing WebSocket-driven real-time telemetry updates.
+A Spring Boot-based ecosystem for monitoring a fleet of delivery robots in a smart warehouse environment. The system tracks 5 simulated robots and 1 real hardware-integrated robot, providing WebSocket-driven real-time telemetry updates.
 
 ## Tech Stack
 
-- **Backend**: Java 17, Spring Boot 3.2.4, Spring Data JPA, Spring Security, Spring WebSocket
-- **Frontend**: Thymeleaf, Bootstrap 5, Leaflet.js, Chart.js, STOMP + SockJS
-- **Database**: MySQL (primary), H2 (fallback)
-- **Build**: Maven
+### Backend
+- **Language**: Java 17
+- **Framework**: Spring Boot 3.2.4, Spring Data JPA, Spring Security, Spring WebSocket
+
+### Frontend
+- **Template Engine**: Thymeleaf
+- **UI Frameworks**: Bootstrap 5, Leaflet.js, Chart.js
+- **WebSocket Library**: STOMP + SockJS
+
+### Database
+- **Primary Database**: MySQL
+- **Fallback Database**: H2
+
+### Build
+- **Build Tool**: Maven
 
 ## Features
 
-- **Live Dashboard**: Animated map with robot markers, movement paths, sensor data cards, and real-time analytics charts (battery, speed, tasks, status).
-- **Robot Monitoring**: Individual detail pages for 6 robots displaying battery level, ultrasonic distance, RFID tags, speed, and destination.
-- **Status Indicators**: Color-coded map markers (Green=Active, Yellow=Charging, Red=Error, Blue=Idle), online/offline status, and last updated timestamps.
-- **Real-Time Updates**: Live data streaming via WebSocket + STOMP. Robot movement updates every 3 seconds, alongside low battery alerts, obstacle detection warnings, and RFID scan notifications.
+### Live Dashboard
+- Animated map with robot markers
+- Movement paths
+- Sensor data cards
+- Real-time analytics charts (battery, speed, tasks, status)
+
+### Robot Monitoring
+- Individual detail pages for 6 robots
+- Displaying battery level, ultrasonic distance, RFID tags, speed, and destination
+
+### Status Indicators
+- Color-coded map markers (Green=Active, Yellow=Charging, Red=Error, Blue=Idle)
+- Online/offline status
+- Last updated timestamps
+
+### Real-Time Updates
+- Live data streaming via WebSocket + STOMP
+- Robot movement updates every 3 seconds
+- Low battery alerts
+- Obstacle detection warnings
+- RFID scan notifications
 
 ## API Endpoints
 
@@ -33,8 +61,6 @@ A Spring Boot dashboard for monitoring a fleet of delivery robots in a smart war
 | `GET` | `/` | Dashboard home |
 
 ## Getting Started
-
-To run this project locally, you will need JDK 17+ and Maven installed.
 
 ### 1. Clone the Repository
 ```bash
@@ -65,35 +91,35 @@ Once started, open your browser and navigate to `http://localhost:8080` to view 
 
 ## Operational Notes
 
-- **WebSocket Tuning**: If you experience stale data during high-frequency packet bursts, adjust the heartbeat interval in `WebSocketConfig.java`. The default 3-second heartbeat should match your backend publish rate.
+- **WebSocket Tuning**: If you experience stale data during high-frequency packet bursts, adjust the heartbeat interval in `WebSocketConfig.java`.
 - **Hardware Integration**: The `/api/robots/live-update` endpoint accepts millisecond-precision timestamps. When connecting physical hardware, modularize the firmware's interval schedule to avoid flooding the client browser with DOM updates.
 - **Debugging Data Flows**: Use your browser's dev tools network tab to filter by WS (WebSocket) and watch live JSON frames to monitor exactly when the dashboard requests robot movements.
 
 ## Changelog
 
 ### 2026-08-03
-- Implemented asynchronous queue processing for incoming WebSocket telemetry data.
-- Optimized map rendering for concurrently simulated robots across 4 warehouse flights.
-- Fixed a bug where offline simulated robots remained scheduled for active tasks.
-- Enhanced dashboard UI for mobile resolution support using responsive Canvas wrappers.
+- Asynchronous queue processing for incoming WebSocket telemetry data
+- Optimized map rendering for concurrently simulated robots across 4 warehouse flights
+- Fixed a bug where offline simulated robots remained scheduled for active tasks
+- Enhanced dashboard UI for mobile resolution support using responsive Canvas wrappers
 
 ### 2026-07-15
-- Introduced an initial A/V prototype for "adaptive speed shuffle mode".
-- Corrected H2 database fallback mode to safely load test fixtures on legacy hardware pagination.
-- Optimized MySQL connection pooling to restrict stale threads during dashboard concurrency.
+- Initial A/V prototype for "adaptive speed shuffle mode"
+- Corrected H2 database fallback mode to safely load test fixtures on legacy hardware pagination
+- Optimized MySQL connection pooling to restrict stale threads during dashboard concurrency
 
 ### 2026-07-01
-- Launched initial dashboard track events.
-- Enforced strict RFID scanning limits to resolve map stutters.
-- Added a Helm chart package option to quickly integrate the dashboard against existing K8s clusters.
+- Launched initial dashboard track events
+- Enforced strict RFID scanning limits to resolve map stutters
+- Added a Helm chart package option to quickly integrate the dashboard against existing K8s clusters
 
 ## Contributing
 
 We welcome framework integrations and feature extensions! If you have a suggestion for extending the dashboard:
 
-1. Fork the repository.
-2. Create a feature branch for your proposed backend or frontend changes.
-3. Submit a pull request.
+1. Fork the repository
+2. Create a feature branch for your proposed backend or frontend changes
+3. Submit a pull request
 
 > **Note:** For all telemetry changes, please tag your PR with the label `telemetry-edit` so we can closely monitor dashboard topology updates.
 
