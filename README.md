@@ -7,71 +7,53 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/shubhyagami/vespabot?style=social)](https://github.com/shubhyagami/vespabot)
 
-A Spring Boot-based ecosystem for monitoring a fleet of delivery robots in a smart warehouse environment. The system tracks 5 simulated robots and 1 real hardware-integrated robot, providing WebSocket-driven real-time telemetry updates.
+## Overview
 
-## Tech Stack
+VESPA is a Spring Boot-based ecosystem designed for monitoring a fleet of delivery robots in a smart warehouse environment. It provides real-time telemetry updates through WebSocket connections, offering insights into the robots' movement, sensor data, and system status.
 
-### Backend
-- **Language**: Java 17
-- **Framework**: Spring Boot 3.2.4, Spring Data JPA, Spring Security, Spring WebSocket
-
-### Frontend
-- **Template Engine**: Thymeleaf
-- **UI Frameworks**: Bootstrap 5, Leaflet.js, Chart.js
-- **WebSocket Library**: STOMP + SockJS
-
-### Database
-- **Primary Database**: MySQL
-- **Fallback Database**: H2
-
-### Build
-- **Build Tool**: Maven
-
-## Features
+## Key Features
 
 ### Live Dashboard
-- Animated map with robot markers
-- Movement paths
-- Sensor data cards
-- Real-time analytics charts (battery, speed, tasks, status)
+
+- Animated map with robot markers and movement paths
+- Real-time analytics charts for battery, speed, tasks, and status
+- Color-coded map markers for active, charging, error, and idle robots
 
 ### Robot Monitoring
-- Individual detail pages for 6 robots
+
+- Individual detail pages for each of the 6 robots
 - Displaying battery level, ultrasonic distance, RFID tags, speed, and destination
 
 ### Status Indicators
-- Color-coded map markers (Green=Active, Yellow=Charging, Red=Error, Blue=Idle)
-- Online/offline status
-- Last updated timestamps
+
+- Online/offline status and last updated timestamps
+- Low battery alerts, obstacle detection warnings, and RFID scan notifications
 
 ### Real-Time Updates
-- Live data streaming via WebSocket + STOMP
-- Robot movement updates every 3 seconds
-- Low battery alerts
-- Obstacle detection warnings
-- RFID scan notifications
 
-## API Endpoints
+- Live data streaming via WebSocket + STOMP (every 3 seconds)
+- Automatic adaptation to high-frequency packet bursts
+- Modularized firmware for physical hardware integration
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/robots` | Get all robots |
-| `GET` | `/api/robots/{id}` | Get robot by ID |
-| `POST` | `/api/robots/live-update` | Receive real robot sensor data |
-| `GET` | `/` | Dashboard home |
+## Technologies and Tools
+
+- **Backend**: Java 17, Spring Boot 3.2.4, Spring Data JPA, Spring Security, Spring WebSocket
+- **Frontend**: Thymeleaf, Bootstrap 5, Leaflet.js, Chart.js
+- **Database**: MySQL (primary) and H2 (fallback)
+- **Build Tool**: Maven
+- **WebSocket Library**: STOMP + SockJS
 
 ## Getting Started
 
-### 1. Clone the Repository
+### Clone the Repository
 ```bash
 git clone https://github.com/shubhyagami/vespabot.git
 cd vespabot
 ```
 
-### 2. Configure the Database
-Update your `src/main/resources/application.properties` to point to your MySQL instance, or rely on the automatic H2 fallback for a quick local test run:
+### Configure the Database
+Update `src/main/resources/application.properties` to point to your MySQL instance or rely on the automatic H2 fallback:
 ```properties
-# Primary MySQL Configuration
 spring.datasource.url=jdbc:mysql://localhost:3306/vespa_db
 spring.datasource.username=root
 spring.datasource.password=your_password
@@ -80,49 +62,33 @@ spring.datasource.password=your_password
 spring.h2.console.enabled=true
 ```
 
-### 3. Run the Application
-Use the Maven wrapper to bootstrap the Spring Boot server:
+### Run the Application
 ```bash
 ./mvnw spring-boot:run
 ```
 
-### 4. Access the Dashboard
-Once started, open your browser and navigate to `http://localhost:8080` to view the live bot telemetry.
+### Access the Dashboard
+```http://localhost:8080```
 
 ## Operational Notes
 
-- **WebSocket Tuning**: If you experience stale data during high-frequency packet bursts, adjust the heartbeat interval in `WebSocketConfig.java`.
-- **Hardware Integration**: The `/api/robots/live-update` endpoint accepts millisecond-precision timestamps. When connecting physical hardware, modularize the firmware's interval schedule to avoid flooding the client browser with DOM updates.
-- **Debugging Data Flows**: Use your browser's dev tools network tab to filter by WS (WebSocket) and watch live JSON frames to monitor exactly when the dashboard requests robot movements.
-
-## Changelog
-
-### 2026-08-03
-- Asynchronous queue processing for incoming WebSocket telemetry data
-- Optimized map rendering for concurrently simulated robots across 4 warehouse flights
-- Fixed a bug where offline simulated robots remained scheduled for active tasks
-- Enhanced dashboard UI for mobile resolution support using responsive Canvas wrappers
-
-### 2026-07-15
-- Initial A/V prototype for "adaptive speed shuffle mode"
-- Corrected H2 database fallback mode to safely load test fixtures on legacy hardware pagination
-- Optimized MySQL connection pooling to restrict stale threads during dashboard concurrency
-
-### 2026-07-01
-- Launched initial dashboard track events
-- Enforced strict RFID scanning limits to resolve map stutters
-- Added a Helm chart package option to quickly integrate the dashboard against existing K8s clusters
+- **WebSocket Tuning**: Adjust the heartbeat interval in `WebSocketConfig.java` for optimal performance.
+- **Hardware Integration**: Modularize the firmware's interval schedule to avoid flooding the client browser with DOM updates.
 
 ## Contributing
 
 We welcome framework integrations and feature extensions! If you have a suggestion for extending the dashboard:
 
 1. Fork the repository
-2. Create a feature branch for your proposed backend or frontend changes
+2. Create a feature branch for your proposed changes
 3. Submit a pull request
-
-> **Note:** For all telemetry changes, please tag your PR with the label `telemetry-edit` so we can closely monitor dashboard topology updates.
 
 ## License
 
 This repository is distributed under the MIT License. See the `LICENSE` file for more information.
+
+### Recent Changes
+
+* **2026-08-03**: Implemented asynchronous queue processing for incoming WebSocket telemetry data
+* **2026-07-15**: Launched initial dashboard track events and enforced strict RFID scanning limits
+* **2026-07-01**: Optimized MySQL connection pooling and added a Helm chart package option for Kubernetes integration.
