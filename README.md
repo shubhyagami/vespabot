@@ -1,89 +1,86 @@
-# VESPA: Smart Multi-Robot Delivery Monitoring System
+# VESPA: Smart Delivery Robot Monitoring System  
 
-[![Java](https://img.shields.io/badge/Java-17-blue?logo=java)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)
-[![Build](https://img.shields.io/badge/Build-Maven-success?logo=apachemaven)](https://maven.apache.org/)
-[![WebSocket](https://img.shields.io/badge/WebSocket-STOMP%2FSockJS-ff69b4)](https://stomp-js.github.io/)
-[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/shubhyagami/vespabot?style=social)](https://github.com/shubhyagami/vespabot)
+[![Java](https://img.shields.io/badge/Java-17-blue?logo=java)](https://openjdk.org/)  
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)  
+[![Build](https://img.shields.io/badge/Build-Maven-success?logo=apachemaven)](https://maven.apache.org/)  
+[![WebSocket](https://img.shields.io/badge/WebSocket-STOMP%2FSockJS-ff69b4)](https://stomp-js.github.io/)  
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)  
+[![GitHub stars](https://img.shields.io/github/stars/shubhyagami/vespabot?style=social)](https://github.com/shubhyagami/vespabot)  
 
-## Overview
+---
 
-VESPA is a cutting-edge monitoring system designed for managing a fleet of delivery robots in a smart warehouse environment. Built on top of Spring Boot, this ecosystem provides real-time telemetry updates via WebSocket connections, offering valuable insights into the robots' movement, sensor data, and system status.
+## Overview  
+VESPA is a real‑time monitoring platform for fleets of delivery robots operating in smart warehouses. Built with Spring Boot, it collects sensor telemetry over a WebSocket (STOMP/SockJS) channel and visualizes robot status, battery levels, navigation data, and alerts on a dynamic dashboard.
 
-## Features
+## Key Features  
 
-### Live Dashboard
+- **Live Dashboard**  
+  - Interactive map with robot markers and movement traces  
+  - Real‑time charts for battery, speed, tasks, and system health  
+  - Color‑coded markers for active, charging, error, and idle robots  
 
-- Animated map with robot markers and movement paths for easy navigation
-- Real-time analytics charts for battery level, speed, tasks, and status to track performance
-- Color-coded map markers for active, charging, error, and idle robots for at-a-glance status
+- **Robot Details**  
+  - Per‑robot pages showing battery level, ultrasonic distance, RFID tags, speed, destination, and live sensor data  
 
-### Robot Monitoring
+- **Status Indicators**  
+  - Online/offline flags and last‑update timestamps  
+  - Low‑battery warnings, obstacle‑detection alerts, and RFID‑scan notifications  
 
-- Individual detail pages for each robot with live data updates
-- Displaying essential metrics such as battery level, ultrasonic distance, RFID tags, speed, and destination
+- **Real‑Time Updates**  
+  - Telemetry streamed every 3 seconds via STOMP/SockJS  
+  - Robust handling of bursty data packets  
+  - Modular firmware design for easy hardware integration  
 
-### Status Indicators
+## Technology Stack  
 
-- Online/offline status and last updated timestamps for real-time tracking
-- Low battery alerts, obstacle detection warnings, and RFID scan notifications for timely interventions
+- **Backend:** Java 17, Spring Boot 3.2.4, Spring Data JPA, Spring Security, Spring WebSocket  
+- **Frontend:** Thymeleaf, Bootstrap 5, Leaflet.js, Chart.js  
+- **Database:** MySQL (primary) with automatic H2 fallback  
+- **Build Tool:** Maven  
+- **WebSocket Library:** STOMP + SockJS  
 
-### Real-Time Updates
+## Getting Started  
 
-- Live data streaming via WebSocket and STOMP (every 3 seconds) for maximum responsiveness
-- Automatic adaptation to high-frequency packet bursts for a seamless user experience
-- Modularized firmware for easy physical hardware integration
+1. **Clone the repository**  
+   ```bash
+   git clone https://github.com/shubhyagami/vespabot.git
+   cd vespabot
+   ```
 
-## Technologies and Tools
+2. **Configure the database**  
+   Edit `src/main/resources/application.properties` to point to your MySQL instance, or rely on the built‑in H2 fallback:  
+   ```properties
+   spring.datasource.url=jdbc:mysql://localhost:3306/vespa_db
+   spring.datasource.username=root
+   spring.datasource.password=your_password
+   ```
 
-* **Backend**: Java 17, Spring Boot 3.2.4, Spring Data JPA, Spring Security, Spring WebSocket
-* **Frontend**: Thymeleaf, Bootstrap 5, Leaflet.js, Chart.js
-* **Database**: MySQL (primary) and H2 (fallback) for reliable data storage
-* **Build Tool**: Maven
-* **WebSocket Library**: STOMP + SockJS for robust and high-performance communication
+3. **Run the application**  
+   ```bash
+   ./mvnw spring-boot:run
+   ```
 
-## Getting Started
+4. **Open the dashboard**  
+   Access the UI at `http://localhost:8080`.
 
-### Clone the Repository
-```bash
-git clone https://github.com/shubhyagami/vespabot.git
-cd vespabot
-```
+## Contributing  
 
-### Configure the Database
-Update `src/main/resources/application.properties` to point to your MySQL instance or rely on the automatic H2 fallback:
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/vespa_db
-spring.datasource.username=root
-spring.datasource.password=your_password
+Contributions are welcome—whether you’re adding integration frameworks, extending features, or polishing the codebase:
 
-# H2 Fallback (Enabled automatically if MySQL is unreachable)
-spring.h2.console.enabled=true
-```
+1. Fork the repository  
+2. Create a dedicated branch for your feature or fix  
+3. Submit a pull request for review  
 
-### Run the Application
-```bash
-./mvnw spring-boot:run
-```
+## License  
 
-### Access the Dashboard
-```http://localhost:8080```
+Distributed under the MIT License. See the `LICENSE` file for details.  
 
-## Contributing
+## Recent Updates  
 
-We welcome framework integrations, feature extensions, and code improvements! If you'd like to contribute:
+- **2026‑08‑03:** Improved asynchronous queue processing for incoming telemetry streams.  
+- **2026‑07‑15:** Added dashboard navigation markers and enforced stricter RFID scanning limits.  
+- **2026‑07‑01:** Optimized MySQL connection pooling and introduced Helm chart support for Kubernetes deployments.  
 
-1. Fork the repository
-2. Create a feature branch for your proposed changes
-3. Submit a pull request for review and discussion
+---  
 
-## License
-
-This repository is distributed under the MIT License. See the `LICENSE` file for more information.
-
-## Recent Changes
-
-* **2026-08-03**: Enhanced asynchronous queue processing for incoming WebSocket telemetry data
-* **2026-07-15**: Introduced initial dashboard track events and enforced strict RFID scanning limits
-* **2026-07-01**: Optimized MySQL connection pooling and added a Helm chart package option for Kubernetes integration
+*VESPA – Real‑time insight for smarter warehouse logistics.*
