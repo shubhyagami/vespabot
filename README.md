@@ -7,10 +7,10 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)  
 [![GitHub stars](https://img.shields.io/github/stars/shubhyagami/vespabot?style=social)](https://github.com/shubhyagami/vespabot)  
 
----
+---  
 
 ## Overview  
-VESPA is a real‑time monitoring platform for fleets of delivery robots operating in smart warehouses. Built with Spring Boot, it collects sensor telemetry over a WebSocket (STOMP/SockJS) channel and visualizes robot status, battery levels, navigation data, and alerts on a dynamic dashboard.
+VESPA is a real‑time monitoring platform for fleets of delivery robots operating in smart warehouses. It collects sensor telemetry over a WebSocket (STOMP/SockJS) channel and visualizes robot status, battery levels, navigation data, and alerts on a dynamic dashboard.
 
 ## Key Features  
 
@@ -23,7 +23,7 @@ VESPA is a real‑time monitoring platform for fleets of delivery robots operati
   - Per‑robot pages showing battery level, ultrasonic distance, RFID tags, speed, destination, and live sensor data  
 
 - **Status Indicators**  
-  - Online/offline flags and last‑update timestamps  
+  - Online/offline flags and timestamps for the latest update  
   - Low‑battery warnings, obstacle‑detection alerts, and RFID‑scan notifications  
 
 - **Real‑Time Updates**  
@@ -41,45 +41,50 @@ VESPA is a real‑time monitoring platform for fleets of delivery robots operati
 
 ## Getting Started  
 
-1. **Clone the repository**  
+1. **Prerequisites**  
+   - Java 17 or later  
+   - Maven 3.9+  
+   - MySQL server (or rely on the built‑in H2 fallback)  
+
+2. **Clone the Repository**  
    ```bash
    git clone https://github.com/shubhyagami/vespabot.git
    cd vespabot
    ```
 
-2. **Configure the database**  
-   Edit `src/main/resources/application.properties` to point to your MySQL instance, or rely on the built‑in H2 fallback:  
+3. **Configure the Database**  
+   Edit `src/main/resources/application.properties` to point to your MySQL instance, or keep the default H2 settings for quick testing:  
    ```properties
    spring.datasource.url=jdbc:mysql://localhost:3306/vespa_db
    spring.datasource.username=root
    spring.datasource.password=your_password
    ```
 
-3. **Run the application**  
+4. **Run the Application**  
    ```bash
    ./mvnw spring-boot:run
    ```
 
-4. **Open the dashboard**  
-   Access the UI at `http://localhost:8080`.
+5. **Open the Dashboard**  
+   Navigate to `http://localhost:8080` in your browser.
 
 ## Contributing  
 
-Contributions are welcome—whether you’re adding integration frameworks, extending features, or polishing the codebase:
+We welcome contributions of any kind—new integration modules, feature extensions, or code‑base refinements:
 
-1. Fork the repository  
-2. Create a dedicated branch for your feature or fix  
-3. Submit a pull request for review  
+1. Fork the repository.  
+2. Create a dedicated branch for your work.  
+3. Submit a pull request for review.  
 
 ## License  
 
-Distributed under the MIT License. See the `LICENSE` file for details.  
+Distributed under the MIT License. See the `LICENSE` file for details.
 
 ## Recent Updates  
 
-- **2026‑08‑03:** Improved asynchronous queue processing for incoming telemetry streams.  
+- **2026‑08‑03:** Enhanced asynchronous queue processing for incoming telemetry streams.  
 - **2026‑07‑15:** Added dashboard navigation markers and enforced stricter RFID scanning limits.  
-- **2026‑07‑01:** Optimized MySQL connection pooling and introduced Helm chart support for Kubernetes deployments.  
+- **2026‑07‑01:** Optimized MySQL connection pooling and introduced Helm‑chart support for Kubernetes deployments.  
 
 ---  
 
