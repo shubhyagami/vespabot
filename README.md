@@ -10,7 +10,7 @@
 ---  
 
 ## Overview  
-VESPA is a real‑time monitoring platform for fleets of delivery robots operating in smart warehouses. It collects sensor telemetry over a WebSocket (STOMP/SockJS) channel and visualizes robot status, battery levels, navigation data, and alerts on a dynamic dashboard.
+VESPA is a real‑time monitoring platform for fleets of delivery robots in smart warehouses. It ingests telemetry over a WebSocket (STOMP/SockJS) channel and visualizes robot status, battery levels, navigation data, and alerts on an interactive dashboard.
 
 ## Key Features  
 
@@ -44,33 +44,32 @@ VESPA is a real‑time monitoring platform for fleets of delivery robots operati
 1. **Prerequisites**  
    - Java 17 or later  
    - Maven 3.9+  
-   - MySQL server (or rely on the built‑in H2 fallback)  
+   - MySQL server (or use the built‑in H2 fallback for quick testing)  
 
 2. **Clone the Repository**  
    ```bash
    git clone https://github.com/shubhyagami/vespabot.git
    cd vespabot
-   ```
+   ```  
 
 3. **Configure the Database**  
-   Edit `src/main/resources/application.properties` to point to your MySQL instance, or keep the default H2 settings for quick testing:  
+   Edit `src/main/resources/application.properties` to point to your MySQL instance. For rapid local testing you can keep the default H2 settings:  
    ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/vespa_db
-   spring.datasource.username=root
-   spring.datasource.password=your_password
-   ```
+   spring.datasource.url=jdbc:h2:mem:vespa_db;DB_CLOSE_DELAY=-1
+   spring.datasource.driverClassName=org.h2.Driver
+   ```  
 
 4. **Run the Application**  
    ```bash
    ./mvnw spring-boot:run
-   ```
+   ```  
 
 5. **Open the Dashboard**  
-   Navigate to `http://localhost:8080` in your browser.
+   Navigate to `http://localhost:8080` in your browser.  
 
 ## Contributing  
 
-We welcome contributions of any kind—new integration modules, feature extensions, or code‑base refinements:
+Contributions are welcome—whether you’re adding new integration modules, extending features, or polishing the codebase:
 
 1. Fork the repository.  
 2. Create a dedicated branch for your work.  
@@ -78,12 +77,12 @@ We welcome contributions of any kind—new integration modules, feature extensio
 
 ## License  
 
-Distributed under the MIT License. See the `LICENSE` file for details.
+Distributed under the MIT License. See the `LICENSE` file for details.  
 
 ## Recent Updates  
 
 - **2026‑08‑03:** Enhanced asynchronous queue processing for incoming telemetry streams.  
-- **2026‑07‑15:** Added dashboard navigation markers and enforced stricter RFID scanning limits.  
+- **2026‑07‑15:** Added dashboard navigation markers and tightened RFID scanning limits.  
 - **2026‑07‑01:** Optimized MySQL connection pooling and introduced Helm‑chart support for Kubernetes deployments.  
 
 ---  
