@@ -10,7 +10,7 @@
 ---  
 
 ## Overview  
-VESPA is a real‑time monitoring platform for fleets of delivery robots in smart warehouses. It ingests telemetry over a WebSocket (STOMP/SockJS) channel and visualizes robot status, battery levels, navigation data, and alerts on an interactive dashboard.
+VESPA is a real‑time monitoring platform for fleets of delivery robots in smart warehouses. It ingests telemetry over a WebSocket (STOMP/SockJS) channel and visualizes robot status, battery levels, navigation data, and alerts on an interactive dashboard.  
 
 ## Key Features  
 
@@ -79,7 +79,7 @@ Contributions are welcome—whether you’re adding new integration modules, ext
 
 Distributed under the MIT License. See the `LICENSE` file for details.  
 
-## Recent Updates  
+## Recent Updates (Changelog)  
 
 - **2026‑08‑03:** Enhanced asynchronous queue processing for incoming telemetry streams.  
 - **2026‑07‑15:** Added dashboard navigation markers and tightened RFID scanning limits.  
