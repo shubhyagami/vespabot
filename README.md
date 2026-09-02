@@ -1,90 +1,138 @@
-# VESPA: Smart Delivery Robot Monitoring System  
+# VESPA – Smart Delivery Robot Monitoring
 
-[![Java](https://img.shields.io/badge/Java-17-blue?logo=java)](https://openjdk.org/)  
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)  
-[![Build](https://img.shields.io/badge/Build-Maven-success?logo=apachemaven)](https://maven.apache.org/)  
-[![WebSocket](https://img.shields.io/badge/WebSocket-STOMP%2FSockJS-ff69b4)](https://stomp-js.github.io/)  
-[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)  
-[![GitHub stars](https://img.shields.io/github/stars/shubhyagami/vespabot?style=social)](https://github.com/shubhyagami/vespabot)  
+[![Java](https://img.shields.io/badge/Java-17-blue?logo=java)](https://openjdk.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)
+[![Build](https://img.shields.io/badge/Build-Maven-success?logo=apachemaven)](https://maven.apache.org/)
+[![WebSocket](https://img.shields.io/badge/WebSocket-STOMP%2FSockJS-ff69b4)](https://stomp-js.github.io/)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/shubhyagami/vespabot?style=social)](https://github.com/shubhyagami/vespabot)
 
----  
+---
 
-## Overview  
-VESPA is a real‑time monitoring platform for fleets of delivery robots in smart warehouses. It ingests telemetry over a WebSocket (STOMP/SockJS) channel and visualizes robot status, battery levels, navigation data, and alerts on an interactive dashboard.  
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Technology Stack](#technology-stack)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Configuration](#configuration)
+- [Running the Application](#running-the-application)
+- [Contributing](#contributing)
+- [License](#license)
+- [Changelog](#changelog)
 
-## Key Features  
+---
 
-- **Live Dashboard**  
-  - Interactive map with robot markers and movement traces  
-  - Real‑time charts for battery, speed, tasks, and system health  
-  - Color‑coded markers for active, charging, error, and idle robots  
+## Overview
+VESPA is a real‑time monitoring platform for fleets of delivery robots operating in smart warehouses.  
+It receives telemetry over a STOMP/SockJS WebSocket channel and visualises robot status, battery levels, navigation data, and alerts on an interactive dashboard.
 
-- **Robot Details**  
-  - Per‑robot pages showing battery level, ultrasonic distance, RFID tags, speed, destination, and live sensor data  
+---
 
-- **Status Indicators**  
-  - Online/offline flags and timestamps for the latest update  
-  - Low‑battery warnings, obstacle‑detection alerts, and RFID‑scan notifications  
+## Features
+- **Live Dashboard**
+  - Interactive map with robot markers and movement traces
+  - Real‑time charts for battery, speed, tasks, and system health
+  - Color‑coded markers: active, charging, error, idle
+- **Robot Details Page**
+  - Battery level, ultrasonic distance, RFID tags, speed, destination, and live sensor data
+- **Status Indicators**
+  - Online/offline flags with last‑update timestamps
+  - Low‑battery warnings, obstacle‑detection alerts, RFID‑scan notifications
+- **Real‑Time Updates**
+  - Telemetry streamed every 3 seconds via STOMP/SockJS
+  - Robust handling of bursty data packets
+  - Modular firmware design for easy hardware integration
 
-- **Real‑Time Updates**  
-  - Telemetry streamed every 3 seconds via STOMP/SockJS  
-  - Robust handling of bursty data packets  
-  - Modular firmware design for easy hardware integration  
+---
 
-## Technology Stack  
+## Architecture
+```
++-----------------+        +-----------------+        +-----------------+
+|  Delivery Robot| <----> |  WebSocket      | <----> |  Frontend (Thymeleaf/Bootstrap) |
+|  (Telemetry)   |        |  (STOMP/SockJS) |        |  (Leaflet, Chart.js)     |
++-----------------+        +-----------------+        +-----------------+
+                                   |
+                                   v
+                           +-----------------+
+                           |  Spring Boot    |
+                           |  (Java 17)      |
+                           +-----------------+
+                                   |
+                                   v
+                           +-----------------+
+                           |  Database       |
+                           |  (MySQL / H2)   |
+                           +-----------------+
+```
 
-- **Backend:** Java 17, Spring Boot 3.2.4, Spring Data JPA, Spring Security, Spring WebSocket  
-- **Frontend:** Thymeleaf, Bootstrap 5, Leaflet.js, Chart.js  
-- **Database:** MySQL (primary) with automatic H2 fallback  
-- **Build Tool:** Maven  
-- **WebSocket Library:** STOMP + SockJS  
+The backend exposes REST endpoints and WebSocket endpoints, persists telemetry in MySQL (or H2 for testing), and serves static resources via Thymeleaf.
 
-## Getting Started  
+---
 
-1. **Prerequisites**  
-   - Java 17 or later  
-   - Maven 3.9+  
-   - MySQL server (or use the built‑in H2 fallback for quick testing)  
+## Technology Stack
+- **Backend**: Java 17, Spring Boot 3.2.4, Spring Data JPA, Spring Security, Spring WebSocket
+- **Frontend**: Thymeleaf, Bootstrap 5, Leaflet.js, Chart.js
+- **Database**: MySQL (primary) with automatic H2 fallback
+- **Build Tool**: Maven
 
-2. **Clone the Repository**  
+---
+
+## Prerequisites
+- Java 17 or newer
+- Maven 3.9 or newer
+- MySQL server (or simply use the H2 fallback)
+
+---
+
+## Getting Started
+
+1. **Clone the repository**
    ```bash
    git clone https://github.com/shubhyagami/vespabot.git
    cd vespabot
-   ```  
+   ```
 
-3. **Configure the Database**  
-   Edit `src/main/resources/application.properties` to point to your MySQL instance. For rapid local testing you can keep the default H2 settings:  
+2. **Configure the database**  
+   Edit `src/main/resources/application.properties` to point to your database.  
+   For quick local testing you can keep the default H2 settings:
    ```properties
    spring.datasource.url=jdbc:h2:mem:vespa_db;DB_CLOSE_DELAY=-1
    spring.datasource.driverClassName=org.h2.Driver
-   ```  
+   ```
 
-4. **Run the Application**  
+3. **Build and run**
    ```bash
    ./mvnw spring-boot:run
-   ```  
+   ```
 
-5. **Open the Dashboard**  
-   Navigate to `http://localhost:8080` in your browser.  
+4. **Access the dashboard**  
+   Open your browser and navigate to `http://localhost:8080`.
 
-## Contributing  
+---
 
-Contributions are welcome—whether you’re adding new integration modules, extending features, or polishing the codebase:
+## Contributing
+Contributions are welcome! Here’s the preferred workflow:
 
 1. Fork the repository.  
-2. Create a dedicated branch for your work.  
-3. Submit a pull request for review.  
+2. Create a new branch: `git checkout -b feature/your-feature`.  
+3. Commit your changes.  
+4. Push the branch and open a pull request.  
 
-## License  
+Please follow the existing code style and include tests where appropriate.
 
-Distributed under the MIT License. See the `LICENSE` file for details.  
+---
 
-## Recent Updates (Changelog)  
+## License
+This project is licensed under the MIT License. See the `LICENSE` file for details.
 
-- **2026‑08‑03:** Enhanced asynchronous queue processing for incoming telemetry streams.  
-- **2026‑07‑15:** Added dashboard navigation markers and tightened RFID scanning limits.  
-- **2026‑07‑01:** Optimized MySQL connection pooling and introduced Helm‑chart support for Kubernetes deployments.  
+---
 
----  
+## Changelog
+- **2026‑08‑03** – Asynchronous queue processing for incoming telemetry streams.  
+- **2026‑07‑15** – Added navigation markers and tightened RFID scanning limits.  
+- **2026‑07‑01** – Optimised MySQL connection pooling and added Helm charts for Kubernetes deployments.  
 
-*VESPA – Real‑time insight for smarter warehouse logistics.*
+## Contact
+Questions or feature requests? Open an issue on GitHub or reach out to the maintainer directly.
