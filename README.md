@@ -3,87 +3,95 @@
 A lightweight, real‑time dashboard for monitoring fleets of delivery robots in smart warehouses.
 
 ![Java](https://img.shields.io/badge/Java-17-blue?logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen?logo=springboot)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen?logo=springboot)
 ![Maven](https://img.shields.io/maven-central/v/com.github.shubhyagami/vespabot?label=maven)
-![Docker](https://img.shields.io/docker/pulls/vespa/vespabot?label=docker)
+![Docker Pulls](https://img.shields.io/docker/pulls/vespa/vespabot?label=docker)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
 ## Table of Contents
 
-1. [Overview](#overview)  
-2. [Quick Start](#quick-start)  
-3. [Configuration](#configuration)  
-4. [Features](#features)  
-5. [Architecture](#architecture)  
-6. [Technology Stack](#technology-stack)  
-7. [Running the Application](#running-the-application)  
-8. [Contributing](#contributing)  
-9. [License](#license)  
+1. [Overview](#overview)
+2. [Getting Started](#getting-started)
+3. [Configuration](#configuration)
+4. [Features](#features)
+5. [Architecture](#architecture)
+6. [Technology Stack](#technology-stack)
+7. [Running the Application](#running-the-application)
+8. [Contributing](#contributing)
+9. [License](#license)
 10. [Changelog](#changelog)
 
 ---
 
 ## Overview
 
-VESPA consumes telemetry sent by delivery robots over a STOMP/SockJS WebSocket channel. It stores the data in a relational database (MySQL by default, H2 for tests) and exposes:
+VESPA receives telemetry from delivery robots via a STOMP over SockJS WebSocket channel. The data is persisted in a relational database (MySQL by default, H2 for tests) and served through:
 
-* REST endpoints for historical queries
-* A WebSocket endpoint for live updates
-* A static front‑end (Thymeleaf + Bootstrap) that visualises the data
+* **REST endpoints** for historical queries
+* **WebSocket endpoint** for live updates
+* A **static front‑end** (Thymeleaf + Bootstrap) that visualizes robot movements and sensor data
 
 The dashboard shows:
 
-- Robot locations on an interactive map with movement traces  
-- Battery level, speed, task status, and sensor readings  
-- Online/offline status, last‑update timestamps, low‑battery warnings, obstacle alerts  
-- A detail panel with live sensor data
+| Item | Description |
+|------|-------------|
+| Robot locations | Interactive map with movement traces |
+| Battery & speed | Real‑time charts |
+| Task status & sensors | Live sensor feed and alerts |
+| Connectivity | Online/offline status, last‑update timestamp, low‑battery and obstacle warnings |
 
 ---
 
-## Quick Start
+## Getting Started
 
-### 1. Clone the repository
+> **Prerequisites**  
+> - Java 17 (or newer)  
+> - Maven 3.9+ (or use the provided wrapper)  
+> - Docker (if you prefer containerized deployment)
 
-```bash
-git clone https://github.com/shubhyagami/vespabot.git
-cd vespabot
-```
+1. **Clone the repo**
 
-### 2. Run locally
+   ```bash
+   git clone https://github.com/shubhyagami/vespabot.git
+   cd vespabot
+   ```
 
-#### With Maven
+2. **Run locally**
 
-```bash
-./mvnw spring-boot:run
-```
+   ```bash
+   ./mvnw spring-boot:run
+   # or
+   ./mvnw clean package
+   java -jar target/vespabot-*.jar
+   ```
 
-Open <http://localhost:8080> in a browser.
+   Open <http://localhost:8080> in a browser.
 
-#### With Docker (recommended for production)
+3. **Run with Docker (recommended for production)**
 
-```bash
-docker build -t vespa/vespabot .
-docker run -p 8080:8080 vespa/vespabot
-```
+   ```bash
+   docker build -t vespa/vespabot .
+   docker run -p 8080:8080 vespa/vespabot
+   ```
 
 ---
 
 ## Configuration
 
-All settings live in `src/main/resources/application.yml`.  
-They can also be overridden with environment variables (variable name is the upper‑case form of the property key, dots replaced with underscores).
+All settings are in `src/main/resources/application.yml`.  
+Environment variables can override properties: replace dots with underscores and use upper‑case names.
 
-| Property                     | Default                                   | Description                                |
-|------------------------------|-------------------------------------------|--------------------------------------------|
-| `spring.datasource.url`     | `jdbc:h2:mem:vespa_db`                   | JDBC URL for the database                  |
-| `spring.datasource.username` | `sa`                                      | Database user                              |
-| `spring.datasource.password` | *empty*                                  | Database password                           |
-| `vespa.telemetry.topic`     | `/topic/telemetry`                        | STOMP topic robots publish telemetry      |
-| `vespa.websocket.enabled`   | `true`                                    | Enable / disable the WebSocket layer       |
+| Property | Default | Description |
+|----------|---------|-------------|
+| `spring.datasource.url` | `jdbc:h2:mem:vespa_db` | JDBC URL for the database |
+| `spring.datasource.username` | `sa` | Database user |
+| `spring.datasource.password` | *(empty)* | Database password |
+| `vespa.telemetry.topic` | `/topic/telemetry` | STOMP topic used by robots |
+| `vespa.websocket.enabled` | `true` | Enable or disable the WebSocket endpoint |
 
-Example environment variable overrides:
+**Example:**
 
 ```bash
 export SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/vespa
@@ -94,11 +102,11 @@ export VESPA_TELEMETRY_TOPIC=/topic/robot/telemetry
 
 ## Features
 
-- **Live Dashboard** – interactive map, movement traces, real‑time charts (battery, speed, tasks, health).  
-- **Robot Detail View** – battery, ultrasonic distance, RFID tags, speed, destination, and live sensor feed.  
-- **Status Indicators** – online/offline, last‑update timestamp, low‑battery warnings, obstacle alerts.  
-- **Telemetry Stream Handling** – streams every 3 s over STOMP/SockJS, graceful burst handling, modular firmware interfaces.  
-- **Persistence** – telemetry stored in MySQL (primary) with H2 as an in‑memory fallback; Spring Data JPA used for data access.
+- **Live Dashboard**: interactive map, movement traces, real‑time charts for battery, speed, tasks, and health metrics.
+- **Robot Detail View**: battery level, ultrasonic distance, RFID tags, speed, destination, and a live sensor feed.
+- **Status Indicators**: online/offline status, last‑update timestamp, low‑battery warnings, and obstacle alerts.
+- **Telemetry Stream Handling**: streams every 3 s over STOMP/SockJS, with graceful burst handling and modular firmware interfaces.
+- **Persistence**: stores telemetry in MySQL (primary) with an H2 in‑memory fallback; data access via Spring Data JPA.
 
 ---
 
@@ -108,7 +116,7 @@ export VESPA_TELEMETRY_TOPIC=/topic/robot/telemetry
 Robot ─[STOMP/SockJS]─► WebSocket Layer ─[REST/WS]─► Spring Boot App ─[JDBC]─► Database
 ```
 
-The Spring Boot application exposes REST endpoints, a WebSocket endpoint, persists data, and serves the static front‑end through Thymeleaf.
+The Spring Boot application exposes REST endpoints for historical data, a WebSocket endpoint for real‑time updates, persists telemetry, and serves a static front‑end through Thymeleaf.
 
 ---
 
@@ -126,14 +134,14 @@ The Spring Boot application exposes REST endpoints, a WebSocket endpoint, persis
 
 ## Running the Application
 
-### Maven
+### With Maven
 
 ```bash
 ./mvnw clean package
 java -jar target/vespabot-*.jar
 ```
 
-### Docker (recommended)
+### With Docker (recommended)
 
 ```bash
 docker build -t vespa/vespabot .
@@ -146,10 +154,10 @@ docker run -p 8080:8080 vespa/vespabot
 
 1. Fork the repository.  
 2. Create a feature branch (`git checkout -b feature/…`).  
-3. Commit your changes following the existing coding style.  
-4. Run the test suite before pushing.  
-5. Open a pull request and describe the changes.  
-6. Update this documentation if you add or modify features.
+3. Follow the existing coding style.  
+4. Run the test suite locally before pushing (`./mvnw test`).  
+5. Open a pull request with a clear description of the changes.  
+6. Update the documentation if you add or modify features.
 
 ---
 
