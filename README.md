@@ -1,6 +1,7 @@
 # VESPA – Smart Delivery Robot Monitoring Dashboard
 
-A lightweight, real‑time dashboard for monitoring fleets of delivery robots in smart warehouses.
+VESPA is a lightweight, real‑time dashboard that visualises telemetry from fleets of delivery robots in smart warehouses.  
+It ingests data over a STOMP/SockJS WebSocket, stores it in a relational database, and exposes both REST and WebSocket endpoints for clients.
 
 ![Java](https://img.shields.io/badge/Java-17-blue?logo=openjdk)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen?logo=springboot)
@@ -13,9 +14,9 @@ A lightweight, real‑time dashboard for monitoring fleets of delivery robots in
 ## Table of Contents
 
 - [Overview](#overview)
+- [Features](#features)
 - [Quick Start](#quick-start)
 - [Configuration](#configuration)
-- [Features](#features)
 - [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
 - [Contributing](#contributing)
@@ -26,29 +27,34 @@ A lightweight, real‑time dashboard for monitoring fleets of delivery robots in
 
 ## Overview
 
-VESPA receives live telemetry from delivery robots over a **STOMP/SockJS WebSocket** channel. The data is stored in a relational database (MySQL by default, H2 for tests) and exposed through:
+VESPA receives live telemetry from robots via a STOMP/SockJS WebSocket channel.  
+Incoming data is persisted in a relational database (MySQL by default, H2 for tests) and made available through:
 
-- **REST endpoints** for historical queries
-- **WebSocket endpoint** for live updates
-- A **static front‑end** (Thymeleaf + Bootstrap) that visualizes robot positions, sensor data, and health metrics
+* **REST API** – query historical telemetry
+* **WebSocket** – push live updates to dashboards
+* **Static Front‑end** – Thymeleaf + Bootstrap that shows robot positions, sensor feeds, and health metrics
 
-The dashboard features:
+---
 
-| Feature | What you see |
-|---------|--------------|
-| Map | Interactive view with movement traces |
-| Charts | Battery level, speed, task progress |
-| Sensor feed | RFID tags, ultrasonic distance, obstacle alerts |
-| Status | Online/offline, last‑updated timestamp, low‑battery warnings |
+## Features
+
+| Area | What you get |
+|------|--------------|
+| **Map** | Interactive view with movement traces (Leaflet) |
+| **Charts** | Battery level, speed, task progress (Chart.js) |
+| **Sensor Feed** | RFID tags, ultrasonic distance, obstacle alerts |
+| **Status** | Online/offline, last‑update timestamp, low‑battery warnings |
+| **Controller** | REST endpoints for historical queries |
+| **Telemetry** | Handles bursts from robots, forwards to the database and WS layer |
 
 ---
 
 ## Quick Start
 
 > **Prerequisites**  
-> - Java 17 (or later)  
-> - Maven 3.9+ (or use the wrapper)  
-> - Docker (optional, for containerized deployment)
+> • Java 17 or later  
+> • Maven 3.9+ (or use the wrapped `./mvnw`)  
+> • Docker (recommended for production)
 
 1. **Clone the repository**
 
@@ -61,34 +67,34 @@ The dashboard features:
 
    ```bash
    ./mvnw spring-boot:run
-   # or build a jar
+   # or build a fat jar
    ./mvnw clean package
    java -jar target/vespabot-*.jar
    ```
 
-3. **Run with Docker (recommended for production)**
+3. **Run with Docker**
 
    ```bash
    docker build -t vespa/vespabot .
    docker run -p 8080:8080 vespa/vespabot
    ```
 
-4. Open <http://localhost:8080> in a browser.
+4. Open [http://localhost:8080](http://localhost:8080) in a browser to see the dashboard.
 
 ---
 
 ## Configuration
 
-All properties live in `src/main/resources/application.yml`.  
-Environment variables can override any property; replace dots (`.`) with underscores (`_`) and use upper‑case names.
+All runtime settings are in `src/main/resources/application.yml`.  
+Environment variables override these values – replace dots with underscores and use uppercase names.
 
-| Property                | Default                     | Description |
-|-------------------------|-----------------------------|-------------|
+| Property | Default | Description |
+|----------|---------|-------------|
 | `spring.datasource.url` | `jdbc:h2:mem:vespa_db` | JDBC URL for the database |
 | `spring.datasource.username` | `sa` | Database user |
 | `spring.datasource.password` | *(empty)* | Database password |
 | `vespa.telemetry.topic` | `/topic/telemetry` | STOMP topic used by robots |
-| `vespa.websocket.enabled` | `true` | Enable/disable the WebSocket endpoint |
+| `vespa.websocket.enabled` | `true` | Enable the WebSocket endpoint |
 
 **Example**
 
@@ -99,49 +105,36 @@ export VESPA_TELEMETRY_TOPIC=/topic/robot/telemetry
 
 ---
 
-## Features
-
-- **Real‑time dashboard** – interactive map, movement traces, live charts (battery, speed, tasks)
-- **Robot detail view** – battery level, ultrasonic distance, RFID tags, destination
-- **Status indicators** – online/offline, last‑update, low‑battery warnings, obstacle alerts
-- **Telemetry handling** – streams every 3 s over STOMP/SockJS, burst‑tolerant, modular firmware interfaces
-- **Persistence** – JPA repository backed by MySQL (primary) with an H2 fallback
-
----
-
 ## Architecture
 
-```text
+```
 Robot ─[STOMP/SockJS]─► WebSocket Layer ─[REST/WS]─► Spring Boot App ─[JDBC]─► Database
 ```
 
-The Spring Boot application:
-
-- Exposes REST endpoints for querying historical telemetry
-- Provides a WebSocket endpoint for client subscriptions
-- Persists incoming telemetry in the database
-- Serves the static web front‑end through Thymeleaf
+* The **WebSocket layer** receives telemetry, pushes it to the database, and forwards it to connected clients.
+* The **REST API** exposes historical queries.
+* The **frontend** (Thymeleaf + Bootstrap) renders the data on an interactive map and charts.
 
 ---
 
 ## Technology Stack
 
-| Layer | Tech |
-|-------|------|
-| **Backend** | Java 17, Spring Boot 3.2, Spring Data JPA, Spring WebSocket |
-| **Frontend** | Thymeleaf, Bootstrap 5, Leaflet, Chart.js |
-| **Database** | MySQL (primary), H2 (fallback) |
-| **Build** | Maven |
-| **Container** | Docker |
+| Layer | Technology |
+|-------|------------|
+| Backend | Java 17, Spring Boot 3.2, Spring Data JPA, Spring WebSocket |
+| Frontend | Thymeleaf, Bootstrap 5, Leaflet, Chart.js |
+| Database | MySQL (primary), H2 (fallback) |
+| Build | Maven |
+| Container | Docker |
 
 ---
 
 ## Contributing
 
 1. Fork the repository.  
-2. Create a feature branch (`git checkout -b feature/…`).  
+2. Create a feature branch (`git checkout -b feature/...`).  
 3. Follow the existing coding style.  
-4. Run the test suite before pushing (`./mvnw test`).  
+4. Run tests (`./mvnw test`) before pushing.  
 5. Open a pull request with a clear description.  
 6. Update the documentation if you add or modify features.
 
