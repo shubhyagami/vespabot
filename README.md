@@ -1,7 +1,7 @@
 # VESPA – Delivery‑Robot Monitoring Dashboard
 
-VESPA is a lightweight, real‑time dashboard that visualises telemetry from fleets of delivery robots operating in smart warehouses.  
-It receives data over a STOMP/SockJS WebSocket, persists it in a relational database, and exposes both REST and WebSocket endpoints for clients.
+VESPA is a lightweight, real‑time dashboard that visualises telemetry from fleets of delivery robots in smart warehouses.  
+It receives data over a STOMP/SockJS WebSocket, stores it in a relational database, and exposes both REST and WebSocket endpoints for clients.
 
 ![Java](https://img.shields.io/badge/Java-17-blue?logo=openjdk)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen?logo=springboot)
@@ -16,13 +16,18 @@ It receives data over a STOMP/SockJS WebSocket, persists it in a relational data
 - [Overview](#overview)
 - [Features](#features)
 - [Quick start](#quick-start)
-  - [With Maven](#with-maven)
-  - [With Docker](#with-docker)
+  - [Maven](#maven)
+  - [Docker](#docker)
 - [Getting started](#getting-started)
 - [Configuration](#configuration)
+- [Usage](#usage)
+  - [Dashboard](#dashboard)
+  - [API](#api)
 - [Architecture](#architecture)
 - [Technology stack](#technology-stack)
 - [Deployment](#deployment)
+  - [Docker](#docker-1)
+  - [Helm (optional)](#helm-optional)
 - [API reference](#api-reference)
 - [Contributing](#contributing)
 - [License](#license)
@@ -32,31 +37,30 @@ It receives data over a STOMP/SockJS WebSocket, persists it in a relational data
 
 ## Overview
 
-VESPA collects live telemetry from robots via a STOMP/SockJS WebSocket channel.  
-Incoming data is persisted in a relational database (MySQL by default, H2 for tests) and made available through:
+VESPA streams live telemetry from robots via a STOMP/SockJS WebSocket, persists it in a relational database (MySQL by default, H2 for tests), and serves:
 
-- **REST API** – query historical telemetry  
-- **WebSocket** – push live updates to dashboards  
+- **REST API** – query historical telemetry
+- **WebSocket** – push live updates to dashboards
 - **Frontend** – Thymeleaf + Bootstrap rendering robot positions, sensor feeds, and health metrics
 
 ---
 
 ## Features
 
-| Area          | What it does                                                                 |
-|---------------|------------------------------------------------------------------------------|
-| Map           | Interactive Leaflet map with movement traces                                 |
-| Charts        | Battery level, speed, and task progress using Chart.js                        |
-| Sensors       | Displays RFID tags, ultrasonic distance, obstacle alerts                    |
-| Status        | Online/offline, last‑update timestamp, low‑battery warnings                |
-| API           | REST endpoints for querying historical data                                 |
-| Telemetry     | Handles bursts, forwards to DB and WebSocket layer                         |
+| Category | Functionality |
+|----------|--------------|
+| **Map** | Interactive Leaflet map with movement traces |
+| **Charts** | Battery level, speed, and task progress via Chart.js |
+| **Sensors** | RFID tags, ultrasonic distance, obstacle alerts |
+| **Status** | Online/offline indicator, timestamps, low‑battery warnings |
+| **API** | REST endpoints for historical data |
+| **Telemetry** | Handles bursts, forwards to DB and WebSocket layer |
 
 ---
 
 ## Quick start
 
-### With Maven
+### Maven
 
 ```bash
 git clone https://github.com/shubhyagami/vespabot.git
@@ -64,14 +68,14 @@ cd vespabot
 ./mvnw spring-boot:run
 ```
 
-Or build a fat JAR:
+Build a fat JAR and run:
 
 ```bash
 ./mvnw clean package
 java -jar target/vespabot-*.jar
 ```
 
-### With Docker
+### Docker
 
 ```bash
 docker build -t vespa/vespabot .
@@ -84,7 +88,7 @@ Open <http://localhost:8080> to view the dashboard.
 
 ## Getting started
 
-1. **Configure the database** – edit `src/main/resources/application.yml` or override via environment variables.  
+1. **Configure the database** – edit `src/main/resources/application.yml` or set environment variables.  
 2. **Start robot clients** – they must publish to the STOMP topic defined by `vespa.telemetry.topic`.  
 3. **Open the dashboard** – the landing page shows the map, charts, and sensor feeds.  
 4. **Query the API** – `GET /api/telemetry?robotId=…` for historical data.
@@ -105,37 +109,61 @@ export VESPA_TELEMETRY_TOPIC=/topic/robot/telemetry
 All runtime settings are in `src/main/resources/application.yml`.  
 Environment variables override these values; dotted keys become uppercase with underscores.
 
-| Property                | Default                          | Description                                 |
-|------------------------ |----------------------------------|---------------------------------------------|
-| `spring.datasource.url` | `jdbc:h2:mem:vespa_db`          | JDBC URL for the database                  |
-| `spring.datasource.username` | `sa`                          | Database user                               |
-| `spring.datasource.password` | *(empty)*                    | Database password                          |
-| `vespa.telemetry.topic`   | `/topic/telemetry`              | STOMP topic used by robots                  |
-| `vespa.websocket.enabled` | `true`                         | Enable the WebSocket endpoint               |
+| Property | Default | Description |
+|----------|---------|-------------|
+| `spring.datasource.url` | `jdbc:h2:mem:vespa_db` | JDBC URL for the database |
+| `spring.datasource.username` | `sa` | Database user |
+| `spring.datasource.password` | *(empty)* | Database password |
+| `vespa.telemetry.topic` | `/topic/telemetry` | STOMP topic used by robots |
+| `vespa.websocket.enabled` | `true` | Enable the WebSocket endpoint |
+
+---
+
+## Usage
+
+### Dashboard
+
+Launch the application and navigate to <http://localhost:8080>.  
+The main page shows:
+
+- A Leaflet map with robot movement traces
+- Real‑time charts (battery, speed, task progress)
+- Sensor feeds (RFID, ultrasonic, obstacles)
+
+### API
+
+The REST API is documented with Swagger at `/swagger-ui.html`.  
+Key endpoints:
+
+| Method | Endpoint | Purpose |
+|--------|-----------|---------|
+| GET | `/api/telemetry` | Query historical telemetry |
+| GET | `/api/telemetry/{id}` | Retrieve a single telemetry record |
+| GET | `/websocket` | WebSocket endpoint for live updates |
 
 ---
 
 ## Architecture
 
 ```
-Robot ── [STOMP/SockJS] ─► WebSocket Layer ── [REST/WS] ─► Spring Boot App ── [JDBC] ─► Database
+Robot ──[STOMP/SockJS]──► WebSocket Layer ──[REST/WS]──► Spring Boot App ──[JDBC]──► Database
 ```
 
-* The **WebSocket layer** receives telemetry, persists it, and forwards it to connected clients.  
-* The **REST API** exposes historical queries.  
-* The **frontend** (Thymeleaf + Bootstrap) renders data on an interactive map and charts.
+* **WebSocket layer** – receives telemetry, persists it, and forwards it to connected clients.  
+* **REST API** – exposes historical queries.  
+* **Frontend** – Thymeleaf + Bootstrap renders data on an interactive map and charts.
 
 ---
 
 ## Technology stack
 
-| Layer      | Technology |
-|------------|------------|
-| Backend    | Java 17, Spring Boot 3.2, Spring Data JPA, Spring WebSocket |
-| Frontend   | Thymeleaf, Bootstrap 5, Leaflet, Chart.js |
-| Database   | MySQL (primary), H2 (fallback) |
-| Build      | Maven |
-| Container  | Docker |
+| Layer | Technology |
+|-------|------------|
+| Backend | Java 17, Spring Boot 3.2, Spring Data JPA, Spring WebSocket |
+| Frontend | Thymeleaf, Bootstrap 5, Leaflet, Chart.js |
+| Database | MySQL (primary), H2 (fallback) |
+| Build | Maven |
+| Container | Docker |
 
 ---
 
@@ -155,7 +183,7 @@ docker run -p 8080:8080 \
 ### Helm (optional)
 
 A Helm chart is available in `deploy/helm`.  
-Install it into a Kubernetes cluster:
+Install it in a Kubernetes cluster:
 
 ```bash
 helm repo add vespa https://shubhyagami.github.io/vespabot/charts
@@ -166,13 +194,14 @@ helm install my-vespa vespa/vespabot
 
 ## API reference
 
-| Method | Endpoint            | Description                         |
-|--------|---------------------|-------------------------------------|
-| GET    | `/api/telemetry`    | Query historical telemetry           |
-| GET    | `/api/telemetry/{id}` | Retrieve a single telemetry record |
-| GET    | `/websocket`        | WebSocket endpoint for live updates |
+All endpoints are documented via Swagger at `/swagger-ui.html` when the application is running.  
+For a quick overview:
 
-All endpoints are documented via Swagger at `/swagger-ui.html` when the application is running.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/telemetry` | Query historical telemetry |
+| GET | `/api/telemetry/{id}` | Retrieve a single telemetry record |
+| GET | `/websocket` | WebSocket endpoint for live updates |
 
 ---
 
