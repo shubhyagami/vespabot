@@ -1,8 +1,10 @@
-# VESPA – Delivery‑Robot Monitoring Dashboard
+[K[2m  [2mmodel openai/gpt-oss-20b failed, trying next...[0m[0m
+[K[2m  [2mmodel openai/gpt-oss-120b failed, trying next...[0m[0m
+# VESPA – Delivery Robot Monitoring Dashboard
 
-*A lightweight, real‑time dashboard for visualising telemetry from fleets of delivery robots in smart warehouses.*
+A lightweight, real-time dashboard for visualizing telemetry from fleets of delivery robots in smart warehouse environments.
 
-VESPA receives telemetry over a STOMP/SockJS WebSocket, stores it in a relational database, and exposes both REST and WebSocket endpoints for clients.
+VESPA ingests telemetry via STOMP/SockJS WebSockets, persists the data in a relational database, and exposes both REST and WebSocket endpoints for client-side consumption.
 
 ---
 
@@ -20,18 +22,12 @@ VESPA receives telemetry over a STOMP/SockJS WebSocket, stores it in a relationa
 
 - [Overview](#overview)
 - [Features](#features)
-- [Quick start](#quick-start)
-  - [Maven](#maven)
-  - [Docker](#docker)
+- [Quick Start](#quick-start)
 - [Configuration](#configuration)
 - [Usage](#usage)
-  - [Dashboard](#dashboard)
-  - [API](#api)
 - [Architecture](#architecture)
-- [Tech stack](#tech-stack)
+- [Tech Stack](#tech-stack)
 - [Deployment](#deployment)
-  - [Docker](#docker-1)
-  - [Helm chart](#helm-chart)
 - [Contributing](#contributing)
 - [License](#license)
 - [Changelog](#changelog)
@@ -40,11 +36,13 @@ VESPA receives telemetry over a STOMP/SockJS WebSocket, stores it in a relationa
 
 ## Overview
 
-VESPA streams live telemetry from robots, persists it in a database (MySQL by default, H2 for tests), and serves:
+VESPA acts as the central telemetry hub for robot fleets. It streams live data, stores historical records for analysis, and provides a comprehensive monitoring interface.
 
-- **REST API** – query historical telemetry
-- **WebSocket** – push live updates to dashboards
-- **Frontend** – Thymeleaf + Bootstrap rendering robot positions, sensor feeds, and health metrics
+**Core Workflow:**
+- **Ingestion:** Receives real-time telemetry from robots via WebSockets.
+- **Persistence:** Stores data in MySQL (production) or H2 (development).
+- **Distribution:** Pushes live updates to the frontend and provides a REST API for historical queries.
+- **Visualization:** Renders robot positions and health metrics via a Thymeleaf-based dashboard.
 
 ---
 
@@ -52,17 +50,19 @@ VESPA streams live telemetry from robots, persists it in a database (MySQL by de
 
 | Category | Functionality |
 |----------|---------------|
-| **Map** | Interactive Leaflet map with movement traces |
-| **Charts** | Battery, speed, and task‑progress graphs (Chart.js) |
-| **Sensors** | RFID, ultrasonic distance, obstacle alerts |
-| **Status** | Online/offline indicator, timestamps, low‑battery warnings |
-| **API** | Endpoints for historical data |
+| **Mapping** | Interactive Leaflet map with real-time movement traces |
+| **Analytics** | Battery level, speed, and task progress graphs via Chart.js |
+| **Sensors** | Monitoring for RFID tags, ultrasonic distances, and obstacle alerts |
+| **Health** | Online/offline status indicators and low-battery warnings |
+| **API** | JSON endpoints for querying historical telemetry data |
 
 ---
 
-## Quick start
+## Quick Start
 
-### Maven
+### Local Development (Maven)
+
+Clone the repository and run the application using the Maven wrapper:
 
 ```bash
 git clone https://github.com/shubhyagami/vespabot.git
@@ -70,38 +70,37 @@ cd vespabot
 ./mvnw spring-boot:run
 ```
 
-Or build a fat JAR:
+Alternatively, build a fat JAR:
 
 ```bash
 ./mvnw clean package
 java -jar target/vespabot-*.jar
 ```
 
-### Docker
+### Docker Quick Run
 
 ```bash
 docker pull vespa/vespabot
 docker run -p 8080:8080 vespa/vespabot
 ```
 
-Open <http://localhost:8080> to view the dashboard.
+Access the dashboard at `http://localhost:8080`.
 
 ---
 
 ## Configuration
 
-All runtime settings live in `src/main/resources/application.yml`.  
-Environment variables override them – dotted keys become uppercase with underscores.
+Configuration is managed via `src/main/resources/application.yml`. You can override these settings using environment variables (convert dotted keys to uppercase with underscores).
 
 | Property | Default | Description |
 |----------|---------|-------------|
-| `spring.datasource.url` | `jdbc:h2:mem:vespa_db` | JDBC URL |
-| `spring.datasource.username` | `sa` | DB user |
-| `spring.datasource.password` | *(empty)* | DB password |
+| `spring.datasource.url` | `jdbc:h2:mem:vespa_db` | Database JDBC URL |
+| `spring.datasource.username` | `sa` | Database username |
+| `spring.datasource.password` | `(empty)` | Database password |
 | `vespa.telemetry.topic` | `/topic/telemetry` | STOMP topic for robot clients |
-| `vespa.websocket.enabled` | `true` | Enable WebSocket endpoint |
+| `vespa.websocket.enabled` | `true` | Flag to enable/disable WebSocket endpoints |
 
-Example (Unix shell):
+**Example Environment Setup:**
 
 ```bash
 export SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/vespa
@@ -114,56 +113,45 @@ export VESPA_TELEMETRY_TOPIC=/topic/robot/telemetry
 
 ## Usage
 
-### Dashboard
+### Monitoring Dashboard
+Navigate to `http://localhost:8080` to access the visual interface:
+- **Live Map:** Track robot movement and paths in real-time.
+- **Telemetry Charts:** Monitor battery depletion and speed fluctuations.
+- **Sensor Feed:** View current RFID scans and ultrasonic distance readings.
 
-Navigate to <http://localhost:8080>.  
-The landing page shows:
-
-- A Leaflet map with robot movement traces
-- Real‑time charts (battery, speed, task progress)
-- Sensor feeds (RFID, ultrasonic, obstacles)
-
-### API
-
-The REST API is documented via Swagger at `/swagger-ui.html`.  
-Key endpoints:
+### REST API
+API documentation is available via Swagger at `/swagger-ui.html`.
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| GET | `/api/telemetry` | Query historical telemetry |
-| GET | `/api/telemetry/{id}` | Retrieve a single telemetry record |
-| GET | `/websocket` | WebSocket endpoint for live updates |
+| `GET` | `/api/telemetry` | Retrieve historical telemetry logs |
+| `GET` | `/api/telemetry/{id}` | Retrieve a specific telemetry record |
+| `GET` | `/websocket` | Establish a WebSocket connection for live updates |
 
 ---
 
 ## Architecture
 
-```
-Robot → STOMP/SockJS → WebSocket layer → Spring Boot App → JDBC → Database
-```
+`Robot` $\rightarrow$ `STOMP/SockJS` $\rightarrow$ `WebSocket Layer` $\rightarrow$ `Spring Boot Logic` $\rightarrow$ `JPA/JDBC` $\rightarrow$ `Database`
 
-* **WebSocket layer** – receives, persists, and forwards telemetry.
-* **REST API** – queries historical data.
-* **Frontend** – Thymeleaf + Bootstrap renders an interactive map and charts.
+- **WebSocket Layer:** Handles bidirectional communication, persistence, and broadcasting.
+- **REST API:** Provides a stateless interface for historical data retrieval.
+- **Frontend:** A server-side rendered Thymeleaf application enhanced with Bootstrap and JavaScript libraries.
 
 ---
 
-## Tech stack
+## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Backend | Java 17, Spring Boot 3.2, Spring Data JPA, Spring WebSocket |
-| Frontend | Thymeleaf, Bootstrap 5, Leaflet, Chart.js |
-| Database | MySQL (primary), H2 (fallback) |
-| Build | Maven |
-| Container | Docker |
+- **Backend:** Java 17, Spring Boot 3.2, Spring Data JPA, Spring WebSocket
+- **Frontend:** Thymeleaf, Bootstrap 5, Leaflet.js, Chart.js
+- **Database:** MySQL (Production), H2 (In-memory / Testing)
+- **Build/DevOps:** Maven, Docker, Helm
 
 ---
 
 ## Deployment
 
-### Docker
-
+### Docker Compose / Standalone
 ```bash
 docker run -d --name vespabot \
   -p 8080:8080 \
@@ -173,10 +161,8 @@ docker run -d --name vespabot \
   vespa/vespabot
 ```
 
-### Helm chart
-
-A Helm chart is available under `deploy/helm`.  
-Install in Kubernetes:
+### Kubernetes (Helm)
+Deploy using the official Helm chart:
 
 ```bash
 helm repo add vespa https://shubhyagami.github.io/vespabot/charts
@@ -187,26 +173,25 @@ helm install vespa-vespabot vespa/vespabot
 
 ## Contributing
 
-1. Fork the repo and create a feature branch.  
-2. Follow the existing Java/Spring coding conventions.  
-3. Run tests (`./mvnw test`) before pushing.  
-4. Submit a pull request with a clear description.  
-5. Update documentation if you add new features.
-
-Pull requests are welcome.
+1. Fork the repository and create your feature branch.
+2. Ensure code adheres to existing Java/Spring coding standards.
+3. Run the test suite using `./mvnw test` before submitting.
+4. Submit a Pull Request with a concise description of changes.
+5. Update documentation if new features are introduced.
 
 ---
 
 ## License
 
-MIT – see the [LICENSE](LICENSE) file.
+Distributed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
 ## Changelog
 
-| Date | Change |
-|------|--------|
-| 2026‑09‑04 | Updated README, badge improvements |
-| 2026‑08‑03 | Added async queue processing for telemetry |
-| 2026‑07‑01 | Optimised MySQL connection pooling; added Helm chart |
+| Date | Version | Changes |
+|------|---------|---------|
+| 2026-09-19 | - | Polished README for clarity and structure |
+| 2026-09-04 | - | Updated badges and README formatting |
+| 2026-08-03 | - | Implemented async queue processing for telemetry ingestion |
+| 2026-07-01 | - | Optimized MySQL connection pooling; released Helm chart |
