@@ -5,7 +5,7 @@ A lightweight, real-time dashboard for visualizing telemetry from delivery robot
 
 ![Java 17](https://img.shields.io/badge/Java-17-blue?logo=openjdk)
 ![Spring Boot 3.2](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen?logo=springboot)
-![Maven Central](https://img.shields.io/maven-central/v/com.github.shubhyagami/vespabot?label=maven)
+![Maven Central](https://img.shields.io/badge/maven-central-blue?logo=apachemaven)
 ![Docker Pulls](https://img.shields.io/docker/pulls/vespa/vespabot?label=docker)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow)
 
@@ -29,7 +29,7 @@ A lightweight, real-time dashboard for visualizing telemetry from delivery robot
 
 ## Overview
 
-VESPA acts as the central telemetry hub for robot fleets, giving warehouse operators live streaming data, historical records, and a monitoring interface.
+VESPA is the central telemetry hub for robot fleets. It gives warehouse operators live streaming data, historical records, and a monitoring interface.
 
 **Core workflow:**
 
@@ -62,65 +62,53 @@ VESPA acts as the central telemetry hub for robot fleets, giving warehouse opera
 
 ### Quick Start
 
-Clone the repository, run it with Maven, and open `http://localhost:8080`.
+Clone the repository, run it with Maven, and open `http://localhost:8080`. The default profile uses an in-memory H2 database, so no external services are required for local development.
 
-```bash
-git clone https://github.com/shubhyagami/vespabot.git
-cd vespabot
-./mvnw spring-boot:run
-```
+    git clone https://github.com/shubhyagami/vespabot.git
+    cd vespabot
+    ./mvnw spring-boot:run
 
 For a containerized setup:
 
-```bash
-docker run -p 8080:8080 vespa/vespabot
-```
+    docker run -p 8080:8080 vespa/vespabot
 
 ### Local Development
 
 Build a standalone executable JAR:
 
-```bash
-./mvnw clean package
-java -jar target/vespabot-*.jar
-```
+    ./mvnw clean package
+    java -jar target/vespabot-*.jar
 
 ### Docker Execution
 
-```bash
-docker pull vespa/vespabot
-docker run -p 8080:8080 vespa/vespabot
-```
+    docker pull vespa/vespabot
+    docker run -p 8080:8080 vespa/vespabot
 
 ---
 
 ## Configuration
 
-Settings are managed in `src/main/resources/application.yml`. You can override them with environment variables by converting dotted keys to uppercase with underscores.
+Settings are managed in `src/main/resources/application.yml`. Spring Boot's relaxed binding lets you override them with environment variables by converting dotted keys to uppercase with underscores.
 
 **Example configuration:**
 
-```yaml
-spring:
-  datasource:
-    url: jdbc:h2:mem:vespa_db
-    username: sa
-    password:
-vespa:
-  telemetry:
-    topic: /topic/telemetry
-  websocket:
-    enabled: true
-```
+    spring:
+      datasource:
+        url: jdbc:h2:mem:vespa_db
+        username: sa
+        password:
+    vespa:
+      telemetry:
+        topic: /topic/telemetry
+      websocket:
+        enabled: true
 
 **Environment variable overrides:**
 
-```bash
-export SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/vespa
-export SPRING_DATASOURCE_USERNAME=root
-export SPRING_DATASOURCE_PASSWORD=secret
-export VESPA_TELEMETRY_TOPIC=/topic/robot/telemetry
-```
+    export SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/vespa
+    export SPRING_DATASOURCE_USERNAME=root
+    export SPRING_DATASOURCE_PASSWORD=secret
+    export VESPA_TELEMETRY_TOPIC=/topic/robot/telemetry
 
 ---
 
@@ -142,7 +130,10 @@ Swagger UI is available at `/swagger-ui.html`.
 |--------|------|---------|
 | `GET` | `/api/telemetry` | List historical telemetry records |
 | `GET` | `/api/telemetry/{id}` | Retrieve a specific telemetry record by ID |
-| `GET` | `/websocket` | Establish a WebSocket connection for live updates |
+
+### WebSocket
+
+Connect to `/websocket` using STOMP/SockJS. Live updates are broadcast on the `/topic/telemetry` topic by default.
 
 ---
 
@@ -169,21 +160,17 @@ Swagger UI is available at `/swagger-ui.html`.
 
 ### Docker Standalone
 
-```bash
-docker run -d --name vespabot \
-  -p 8080:8080 \
-  -e SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/vespa \
-  -e SPRING_DATASOURCE_USERNAME=root \
-  -e SPRING_DATASOURCE_PASSWORD=secret \
-  vespa/vespabot
-```
+    docker run -d --name vespabot \
+      -p 8080:8080 \
+      -e SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/vespa \
+      -e SPRING_DATASOURCE_USERNAME=root \
+      -e SPRING_DATASOURCE_PASSWORD=secret \
+      vespa/vespabot
 
 ### Kubernetes (Helm)
 
-```bash
-helm repo add vespa https://shubhyagami.github.io/vespabot/charts
-helm install vespa-vespabot vespa/vespabot
-```
+    helm repo add vespa https://shubhyagami.github.io/vespabot/charts
+    helm install vespa-vespabot vespa/vespabot
 
 ---
 
@@ -199,14 +186,4 @@ helm install vespa-vespabot vespa/vespabot
 
 ## License
 
-Distributed under the MIT License. See the [LICENSE](LICENSE) file for more information.
-
----
-
-## Changelog
-
-| Date | Version | Changes |
-|------|---------|---------|
-| 2026-09-26 | – | Cleaned up README formatting, clarified usage, and organized sections |
-| 2026-08-03 | – | Implemented async queue processing for telemetry ingestion |
-| 2026-07-01 | – | Optimized MySQL connection pooling; released Helm chart |
+Distributed
