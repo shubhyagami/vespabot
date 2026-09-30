@@ -1,7 +1,7 @@
 [K[2m  [2mmodel z-ai/glm-5.3-flash failed, trying next...[0m[0m
 # VESPA – Delivery Robot Monitoring Dashboard
 
-A lightweight, real-time dashboard for visualizing telemetry from delivery-robot fleets in smart warehouses. VESPA ingests telemetry via STOMP/SockJS over WebSockets, persists it in a relational database, and exposes REST and WebSocket endpoints for client consumption.
+A lightweight, real-time dashboard for visualizing telemetry from delivery-robot fleets in smart warehouses. VESPA ingests telemetry over STOMP/SockJS WebSockets, persists it in a relational database, and exposes REST and WebSocket endpoints for client consumption.
 
 [![Java 17](https://img.shields.io/badge/Java-17-blue?logo=openjdk)](https://openjdk.org/projects/jdk/17/)
 [![Spring Boot 3.2](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)
@@ -23,50 +23,41 @@ A lightweight, real-time dashboard for visualizing telemetry from delivery-robot
 - [Deployment](#deployment)
 - [Contributing](#contributing)
 - [License](#license)
-- [Changelog](#changelog)
 
 ---
 
 ## Overview
 
-VESPA acts as the central telemetry hub for robot fleets. Operators can:
+VESPA is the central telemetry hub for robot fleets. Operators can:
 
 - View live robot positions on an interactive map.
-- Inspect real-time telemetry streams and sensor feeds.
+- Inspect real-time telemetry and sensor feeds.
 - Query historical data via REST or WebSocket.
-- Visualize key metrics such as battery level, speed, and task progress.
+- Track key metrics such as battery level, speed, and task progress.
 
-All data is stored in a relational database (MySQL in production, H2 for local development).
+All data is stored in a relational database — MySQL in production, H2 for local development.
 
 ---
 
 ## Features
 
-| Category | What’s possible |
-|----------|-----------------|
+| Category | Description |
+|----------|-------------|
 | **Real-time Map** | Leaflet map with live robot positions and path traces |
-| **Analytics** | Battery, speed, and task progress charts powered by Chart.js |
+| **Analytics** | Battery, speed, and task-progress charts via Chart.js |
 | **Sensors** | Live RFID scans, ultrasonic distance, and obstacle alerts |
 | **Health** | Online/offline status and low-battery warnings |
-| **APIs** | JSON endpoints for historical telemetry |
+| **REST API** | JSON endpoints for historical telemetry |
 | **WebSockets** | STOMP/SockJS for low-latency updates |
 
 ---
 
 ## Getting Started
 
-> **TL;DR**
-> ```bash
-> git clone https://github.com/shubhyagami/vespabot.git
-> cd vespabot
-> ./mvnw spring-boot:run
-> ```
-> Open `http://localhost:8080` in your browser.
-
 ### Prerequisites
 
 - Java 17 or newer
-- Maven (the wrapper `./mvnw` is included)
+- Maven (the `./mvnw` wrapper is included)
 - Docker (optional, for containerized runs)
 
 ### Quick local run
@@ -76,6 +67,8 @@ git clone https://github.com/shubhyagami/vespabot.git
 cd vespabot
 ./mvnw spring-boot:run
 ```
+
+Then open `http://localhost:8080` in your browser.
 
 The default profile uses an in-memory H2 database, so no external services are required for local development.
 
@@ -90,8 +83,7 @@ java -jar target/vespabot-*.jar
 
 ## Configuration
 
-Application properties live in `src/main/resources/application.yml`.
-Spring Boot’s relaxed binding allows you to override any property with an environment variable by converting dotted keys to uppercase with underscores.
+Application properties live in `src/main/resources/application.yml`. Spring Boot's relaxed binding lets you override any property with an environment variable by converting dotted keys to uppercase with underscores.
 
 ```yaml
 spring:
@@ -124,13 +116,13 @@ export VESPA_TELEMETRY_TOPIC=/topic/robot/telemetry
 
 Navigate to `http://localhost:8080` to view:
 
-- **Live Map** – see robot positions and movement paths in real time.
+- **Live Map** – robot positions and movement paths in real time.
 - **Telemetry Charts** – battery depletion, speed, and task progress.
 - **Sensor Feed** – live RFID and distance readings.
 
 ### REST API
 
-Open Swagger UI at `http://localhost:8080/swagger-ui.html`. Key endpoints:
+Swagger UI is available at `http://localhost:8080/swagger-ui.html`. Key endpoints:
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -179,7 +171,7 @@ docker pull vespa/vespabot
 docker run -p 8080:8080 vespa/vespabot
 ```
 
-For a database-backed instance:
+### Docker with an external MySQL database
 
 ```bash
 docker run -d --name vespabot \
@@ -187,4 +179,25 @@ docker run -d --name vespabot \
   -e SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/vespa \
   -e SPRING_DATASOURCE_USERNAME=root \
   -e SPRING_DATASOURCE_PASSWORD=secret \
-  vespa/vespab
+  vespa/vespabot
+```
+
+### Kubernetes
+
+Helm charts are provided under `charts/vespabot`. Adjust `values.yaml` for your cluster and install:
+
+```bash
+helm install vespabot ./charts/vespabot
+```
+
+---
+
+## Contributing
+
+Issues and pull requests are welcome. Please open an issue first to discuss significant changes, and make sure `./mvnw test` passes before submitting a PR.
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE).
